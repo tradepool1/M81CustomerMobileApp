@@ -51,7 +51,11 @@ data class LoanAccount(
     val totalEmiCount: Int,
     val status: LoanStatus,
     val branchName: String,
-    val loanManagerName: String
+    val loanManagerName: String,
+    val principlReceived: Double = 0.0,
+    val interestReceived: Double = 0.0,
+    val netFinance: Double = 0.0,
+    val receivedAmt: Double = 0.0
 ) {
     /**
      * Computes repayment progress as a float between 0f and 1f.

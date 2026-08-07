@@ -11,7 +11,8 @@ object Constants {
     const val API_WRITE_TIMEOUT   = 30L
 
     // ── OTP ───────────────────────────────────────────────────────────────────
-    const val OTP_LENGTH = 6
+    const val MIN_OTP_LENGTH = 4
+    const val MAX_OTP_LENGTH = 5
 
     // ── Secure Storage Keys ───────────────────────────────────────────────────
     const val SECURE_PREF_FILE       = "mentor_secure_prefs"

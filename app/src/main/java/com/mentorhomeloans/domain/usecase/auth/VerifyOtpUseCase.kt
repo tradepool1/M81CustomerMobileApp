@@ -20,7 +20,8 @@ class VerifyOtpUseCase @Inject constructor(
      * Verifies the OTP for the given mobile/session combination.
      *
      * Business rules:
-     * - OTP must be exactly [Constants.OTP_LENGTH] digits.
+     * - OTP must not be empty.
+     * - OTP must be at least [Constants.MIN_OTP_LENGTH] digits.
      * - OTP must contain only numeric characters.
      *
      * @param mobileNumber  The mobile number used to request the OTP.
@@ -34,8 +35,11 @@ class VerifyOtpUseCase @Inject constructor(
         otp: String,
         sessionId: String
     ): Result<Boolean> {
-        if (otp.length != Constants.OTP_LENGTH || !otp.all { it.isDigit() }) {
-            return Result.Error(IllegalArgumentException("Please enter a valid ${Constants.OTP_LENGTH}-digit OTP"))
+        if (otp.isBlank()) {
+            return Result.Error(IllegalArgumentException("OTP cannot be empty"))
+        }
+        if (otp.length < Constants.MIN_OTP_LENGTH || !otp.all { it.isDigit() }) {
+            return Result.Error(IllegalArgumentException("OTP must be at least ${Constants.MIN_OTP_LENGTH} digits"))
         }
         return authRepository.verifyOtp(mobileNumber, otp, sessionId)
     }

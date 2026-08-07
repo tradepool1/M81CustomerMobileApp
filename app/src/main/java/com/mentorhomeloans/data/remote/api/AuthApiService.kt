@@ -1,31 +1,38 @@
 package com.mentorhomeloans.data.remote.api
 
-import com.mentorhomeloans.data.remote.dto.ApiResponse
-import com.mentorhomeloans.data.remote.dto.SendOtpResponseDto
-import com.mentorhomeloans.data.remote.dto.VerifyOtpResponseDto
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
+import com.mentorhomeloans.data.remote.dto.GenerateOtpRequestDto
+import com.mentorhomeloans.data.remote.dto.GenerateOtpResponseDto
+import com.mentorhomeloans.data.remote.dto.OtpVerificationRequestDto
+import com.mentorhomeloans.data.remote.dto.OtpVerificationResponseDto
+import retrofit2.http.Body
+import retrofit2.http.Headers
 import retrofit2.http.POST
 
 /**
  * Authentication REST endpoints definition.
+ * Base URL: https://192.168.200.11:4204/api/MobileApp/
  */
 interface AuthApiService {
 
-    @FormUrlEncoded
-    @POST("auth/send-otp")
-    suspend fun sendOtp(
-        @Field("mobileNumber") mobileNumber: String
-    ): ApiResponse<SendOtpResponseDto>
+    /**
+     * Sends OTP to the given phone number.
+     * POST /api/MobileApp/GenerateOTP
+     * Body: { "phoneNo": "..." }
+     */
+    @Headers("Content-Type: application/json-patch+json")
+    @POST("GenerateOTP")
+    suspend fun generateOtp(
+        @Body request: GenerateOtpRequestDto
+    ): GenerateOtpResponseDto
 
-    @FormUrlEncoded
-    @POST("auth/verify-otp")
+    /**
+     * Verifies OTP code for the given phone number.
+     * POST /api/MobileApp/OTP_Verification
+     * Body: { "phoneNo": "...", "otpCode": "..." }
+     */
+    @Headers("Content-Type: application/json-patch+json")
+    @POST("OTP_Verification")
     suspend fun verifyOtp(
-        @Field("mobileNumber") mobileNumber: String,
-        @Field("otp") otp: String,
-        @Field("sessionId") sessionId: String
-    ): ApiResponse<VerifyOtpResponseDto>
-
-    @POST("auth/logout")
-    suspend fun logout(): ApiResponse<Unit>
+        @Body request: OtpVerificationRequestDto
+    ): OtpVerificationResponseDto
 }

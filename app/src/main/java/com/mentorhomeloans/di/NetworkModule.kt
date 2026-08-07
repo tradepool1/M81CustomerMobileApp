@@ -1,6 +1,7 @@
 package com.mentorhomeloans.di
 
 import com.mentorhomeloans.core.network.ApiClient
+import com.mentorhomeloans.core.network.ApiLoggingInterceptor
 import com.mentorhomeloans.core.network.AuthInterceptor
 import com.mentorhomeloans.data.remote.api.AuthApiService
 import com.mentorhomeloans.data.remote.api.DocumentApiService
@@ -27,8 +28,11 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(authInterceptor: AuthInterceptor): Retrofit {
-        return ApiClient.createRetrofit(authInterceptor)
+    fun provideRetrofit(
+        authInterceptor: AuthInterceptor,
+        apiLoggingInterceptor: ApiLoggingInterceptor
+    ): Retrofit {
+        return ApiClient.createRetrofit(authInterceptor, apiLoggingInterceptor)
     }
 
     @Provides

@@ -3,6 +3,31 @@ package com.mentorhomeloans.data.remote.dto
 import com.google.gson.annotations.SerializedName
 
 /**
+ * Request body for Get_All_Loan_Details_By_Customer_Phone_Number endpoint.
+ */
+data class GetLoanDetailsRequestDto(
+    @SerializedName("phoneNo") val phoneNo: String
+)
+
+/**
+ * Response item for Get_All_Loan_Details_By_Customer_Phone_Number endpoint.
+ */
+data class GetLoanDetailsResponseItemDto(
+    @SerializedName("LoanAcNo") val loanAcNo: String?,
+    @SerializedName("PrinciplReceived") val principlReceived: Double?,
+    @SerializedName("InterestReceived") val interestReceived: Double?,
+    @SerializedName("DisbursementAmt") val disbursementAmt: Double?,
+    @SerializedName("NetFinance") val netFinance: Double?,
+    @SerializedName("Case_IRR") val caseIRR: Double?,
+    @SerializedName("LoanStatus") val loanStatus: String?,
+    @SerializedName("POS") val pos: Double?,
+    @SerializedName("ReceivedAmt") val receivedAmt: Double?,
+    @SerializedName("LoanAmount") val loanAmount: Double?,
+    @SerializedName("EMI_DueDate") val emiDueDate: String?,
+    @SerializedName("LoanEMIAmount") val loanEMIAmount: Double?
+)
+
+/**
  * DTO structure mapping remote LoanAccount entity properties.
  */
 data class LoanAccountDto(

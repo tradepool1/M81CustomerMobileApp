@@ -176,6 +176,8 @@ fun LoginScreen(
                         }
                     }
                     is LoginUIState.VerifyOtp -> {
+                        var otpError by remember { mutableStateOf<String?>(null) }
+
                         Text(
                             text = stringResource(R.string.otp_sent_format, mobileNumber),
                             fontSize = 14.sp,
@@ -185,10 +187,25 @@ fun LoginScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                         OutlinedTextField(
                             value = otpCode,
-                            onValueChange = { if (it.length <= 6) otpCode = it },
+                            onValueChange = {
+                                if (it.length <= 5) {
+                                    otpCode = it
+                                    otpError = null
+                                }
+                            },
                             placeholder = { Text(stringResource(R.string.hint_verification_code)) },
                             leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = Color.LightGray) },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            isError = otpError != null,
+                            supportingText = {
+                                if (otpError != null) {
+                                    Text(
+                                        text = otpError!!,
+                                        color = MaterialTheme.colorScheme.error,
+                                        fontSize = 12.sp
+                                    )
+                                }
+                            },
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(12.dp),
                             colors = OutlinedTextFieldDefaults.colors(
@@ -196,9 +213,17 @@ fun LoginScreen(
                                 unfocusedBorderColor = Color(0xFFE5E7EB)
                             )
                         )
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
                         Button(
-                            onClick = { viewModel.verifyOtp(mobileNumber, otpCode, state.sessionId) },
+                            onClick = {
+                                when {
+                                    otpCode.isBlank() ->
+                                        otpError = "OTP cannot be empty"
+                                    otpCode.length < 4 ->
+                                        otpError = "OTP must be at least 4 digits"
+                                    else -> viewModel.verifyOtp(mobileNumber, otpCode, state.sessionId)
+                                }
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(56.dp),
@@ -208,6 +233,17 @@ fun LoginScreen(
                             Text(text = stringResource(R.string.btn_verify_login), fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
                         }
                         Spacer(modifier = Modifier.height(8.dp))
+                        // ── Resend OTP ────────────────────────────────────────────────
+                        TextButton(
+                            onClick = {
+                                otpCode  = ""
+                                otpError = null
+                                viewModel.sendOtp(mobileNumber, "")
+                            },
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        ) {
+                            Text(text = stringResource(R.string.btn_resend_otp), color = MentorBlue)
+                        }
                         TextButton(
                             onClick = { viewModel.resetState() },
                             modifier = Modifier.align(Alignment.End)

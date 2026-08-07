@@ -28,6 +28,7 @@
     <string name="btn_verify_login">Verify &amp; Login</string>
     <string name="btn_request_registration">Request Registration</string>
     <string name="btn_change_mobile">Change Mobile Number</string>
+    <string name="btn_resend_otp">Resend OTP</string>
     <string name="otp_sent_format">OTP sent to %1$s</string>
     <string name="hint_verification_code">Verification Code</string>
 

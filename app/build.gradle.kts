@@ -36,8 +36,9 @@ android {
             isMinifyEnabled        = false
             applicationIdSuffix    = ".debug"
             versionNameSuffix      = "-DEBUG"
-            buildConfigField("Boolean", "ENABLE_LOGGING", "true")
-            buildConfigField("String",  "BASE_URL",       "\"https://api-dev.mentorhomeloans.com/v1/\"")
+            buildConfigField("Boolean", "ENABLE_LOGGING",  "true")
+            buildConfigField("String",  "BASE_URL",        "\"https://192.168.200.11:4204/api/MobileApp/\"")
+            buildConfigField("Boolean", "TRUST_ALL_CERTS", "true")
         }
         release {
             isMinifyEnabled      = true
@@ -46,8 +47,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("Boolean", "ENABLE_LOGGING", "false")
-            buildConfigField("String",  "BASE_URL",       "\"https://api.mentorhomeloans.com/v1/\"")
+            buildConfigField("Boolean", "ENABLE_LOGGING",  "false")
+            buildConfigField("String",  "BASE_URL",        "\"https://api.mentorhomeloans.com/v1/\"")
+            buildConfigField("Boolean", "TRUST_ALL_CERTS", "false")
         }
     }
 

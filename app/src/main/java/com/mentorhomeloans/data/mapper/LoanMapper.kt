@@ -1,6 +1,7 @@
 package com.mentorhomeloans.data.mapper
 
 import com.mentorhomeloans.data.local.entity.LoanAccountEntity
+import com.mentorhomeloans.data.remote.dto.GetLoanDetailsResponseItemDto
 import com.mentorhomeloans.domain.model.LoanAccount
 import com.mentorhomeloans.domain.model.LoanStatus
 import com.mentorhomeloans.domain.model.LoanType
@@ -61,6 +62,62 @@ object LoanMapper {
             status = domain.status.name,
             branchName = domain.branchName,
             loanManagerName = domain.loanManagerName
+        )
+    }
+
+    fun fromApiDtoToDomain(dto: GetLoanDetailsResponseItemDto): LoanAccount {
+        val loanAcNo = dto.loanAcNo ?: "N/A"
+        val statusEnum = when (dto.loanStatus?.lowercase()) {
+            "regular", "active" -> LoanStatus.ACTIVE
+            "closed" -> LoanStatus.CLOSED
+            "npa" -> LoanStatus.NPA
+            else -> LoanStatus.ACTIVE
+        }
+        val loanTypeEnum = when {
+            loanAcNo.contains("HL", ignoreCase = true) -> LoanType.HOME_LOAN
+            loanAcNo.contains("LAP", ignoreCase = true) -> LoanType.LAP
+            else -> LoanType.HOME_LOAN
+        }
+
+        val loanAmount = dto.loanAmount ?: 0.0
+        val pos = dto.pos ?: 0.0
+        val emiAmount = dto.loanEMIAmount ?: 0.0
+        val interestRate = dto.caseIRR ?: 0.0
+        val disbursedAmt = dto.disbursementAmt ?: 0.0
+        val emiDueDate = dto.emiDueDate ?: ""
+
+        val principlReceived = dto.principlReceived ?: 0.0
+        val interestReceived = dto.interestReceived ?: 0.0
+        val netFinance = dto.netFinance ?: 0.0
+        val receivedAmt = dto.receivedAmt ?: 0.0
+
+        return LoanAccount(
+            id = loanAcNo,
+            accountNumber = loanAcNo,
+            loanType = loanTypeEnum,
+            sanctionAmount = loanAmount,
+            disbursedAmount = disbursedAmt,
+            outstandingAmount = pos,
+            interestRate = interestRate,
+            tenure = 240,
+            remainingTenure = 240,
+            emiAmount = emiAmount,
+            nextEmiDate = emiDueDate,
+            nextEmiAmount = emiAmount,
+            isOverdue = false,
+            overdueAmount = 0.0,
+            overdueEmiCount = 0,
+            startDate = "",
+            maturityDate = "",
+            paidEmiCount = 0,
+            totalEmiCount = 240,
+            status = statusEnum,
+            branchName = "Head Office",
+            loanManagerName = "",
+            principlReceived = principlReceived,
+            interestReceived = interestReceived,
+            netFinance = netFinance,
+            receivedAmt = receivedAmt
         )
     }
 }

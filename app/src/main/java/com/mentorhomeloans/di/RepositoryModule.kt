@@ -1,6 +1,7 @@
 package com.mentorhomeloans.di
 
-import com.mentorhomeloans.data.repository.MockAuthRepository
+import com.mentorhomeloans.data.repository.RemoteAuthRepository
+import com.mentorhomeloans.data.repository.RemoteLoanRepository
 import com.mentorhomeloans.data.repository.MockDocumentRepository
 import com.mentorhomeloans.data.repository.MockLoanRepository
 import com.mentorhomeloans.data.repository.MockNotificationRepository
@@ -25,11 +26,7 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 /**
- * Hilt module binding domain Repository interfaces to their Mock implementations.
- *
- * To switch from Mock to Remote: replace each Mock* binding with the
- * corresponding Remote* implementation class without touching the use cases
- * or ViewModels (Open/Closed Principle).
+ * Hilt module binding domain Repository interfaces to their implementations.
  */
 @Module
 @InstallIn(SingletonComponent::class)
@@ -37,11 +34,11 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindAuthRepository(impl: MockAuthRepository): AuthRepository
+    abstract fun bindAuthRepository(impl: RemoteAuthRepository): AuthRepository
 
     @Binds
     @Singleton
-    abstract fun bindLoanRepository(impl: MockLoanRepository): LoanRepository
+    abstract fun bindLoanRepository(impl: RemoteLoanRepository): LoanRepository
 
     @Binds
     @Singleton

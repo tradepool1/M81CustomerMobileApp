@@ -3,20 +3,35 @@ package com.mentorhomeloans.data.remote.dto
 import com.google.gson.annotations.SerializedName
 
 /**
- * DTO carrying details returned upon requesting login OTP.
+ * Request body for GenerateOTP endpoint.
  */
-data class SendOtpResponseDto(
-    @SerializedName("sessionId") val sessionId: String,
-    @SerializedName("otpLength") val otpLength: Int,
-    @SerializedName("expirySeconds") val expirySeconds: Int
+data class GenerateOtpRequestDto(
+    @SerializedName("phoneNo") val phoneNo: String
 )
 
 /**
- * DTO carrying login details returned upon verifying login OTP.
+ * Response from GenerateOTP endpoint.
+ * { "Status": true, "Message": "OTP sent successfully." }
  */
-data class VerifyOtpResponseDto(
-    @SerializedName("jwtToken") val jwtToken: String,
-    @SerializedName("refreshToken") val refreshToken: String,
-    @SerializedName("customerId") val customerId: String,
-    @SerializedName("mobileNumber") val mobileNumber: String
+data class GenerateOtpResponseDto(
+    @SerializedName("Status")  val status: Boolean,
+    @SerializedName("Message") val message: String
+)
+
+/**
+ * Request body for OTP_Verification endpoint.
+ */
+data class OtpVerificationRequestDto(
+    @SerializedName("phoneNo")  val phoneNo: String,
+    @SerializedName("otpCode")  val otpCode: String
+)
+
+/**
+ * Response from OTP_Verification endpoint.
+ * { "Status": true, "Message": "...", "Token": "eyJ..." }
+ */
+data class OtpVerificationResponseDto(
+    @SerializedName("Status")  val status: Boolean,
+    @SerializedName("Message") val message: String,
+    @SerializedName("Token")   val token: String?
 )

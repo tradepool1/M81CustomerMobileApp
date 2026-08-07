@@ -78,64 +78,51 @@ fun LoanDetailsScreen(
                             }
                         }
 
-                        // Loan Info Card
+                        // Financial Breakdown Card
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             colors = CardDefaults.cardColors(containerColor = Color.White),
                             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                         ) {
                             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                DetailRow("Loan Type", loan.loanType.displayName)
+                                Text("Financial Details", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MentorBlue)
                                 Divider(color = Color.LightGray)
-                                DetailRow("Sanction Amount", CurrencyUtils.formatINR(loan.sanctionAmount))
+                                DetailRow("Loan Amount", CurrencyUtils.formatINR(loan.sanctionAmount))
                                 Divider(color = Color.LightGray)
-                                DetailRow("Disbursed Amount", CurrencyUtils.formatINR(loan.disbursedAmount))
+                                DetailRow("Disbursement Amount", CurrencyUtils.formatINR(loan.disbursedAmount))
                                 Divider(color = Color.LightGray)
-                                DetailRow("Outstanding Amount", CurrencyUtils.formatINR(loan.outstandingAmount))
+                                DetailRow("Net Finance", CurrencyUtils.formatINR(loan.netFinance))
                                 Divider(color = Color.LightGray)
-                                DetailRow("Interest Rate", "${loan.interestRate}% p.a.")
+                                DetailRow("Outstanding (POS)", CurrencyUtils.formatINR(loan.outstandingAmount))
+                                Divider(color = Color.LightGray)
+                                DetailRow("Case IRR (Interest)", "${loan.interestRate}%")
                             }
                         }
 
-                        // Repayment Info Card
+                        // Payment & Collection Card
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             colors = CardDefaults.cardColors(containerColor = Color.White),
                             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                         ) {
                             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                DetailRow("Tenure", "${loan.tenure} months")
-                                Divider(color = Color.LightGray)
-                                DetailRow("Remaining Tenure", "${loan.remainingTenure} months")
+                                Text("Repayment Summary", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MentorBlue)
                                 Divider(color = Color.LightGray)
                                 DetailRow("EMI Amount", CurrencyUtils.formatINR(loan.emiAmount))
                                 Divider(color = Color.LightGray)
-                                DetailRow("Next EMI Date", loan.nextEmiDate)
+                                DetailRow("EMI Due Date", if (loan.nextEmiDate.isNotBlank()) loan.nextEmiDate else "N/A")
                                 Divider(color = Color.LightGray)
-                                DetailRow("Overdue Status", if (loan.isOverdue) "Overdue (${CurrencyUtils.formatINR(loan.overdueAmount)})" else "On Track")
-                            }
-                        }
-
-                        // Dates & Management Card
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(containerColor = Color.White),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                        ) {
-                            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                DetailRow("Start Date", loan.startDate)
+                                DetailRow("Principal Received", CurrencyUtils.formatINR(loan.principlReceived))
                                 Divider(color = Color.LightGray)
-                                DetailRow("Maturity Date", loan.maturityDate)
+                                DetailRow("Interest Received", CurrencyUtils.formatINR(loan.interestReceived))
                                 Divider(color = Color.LightGray)
-                                DetailRow("Branch", loan.branchName)
-                                Divider(color = Color.LightGray)
-                                DetailRow("Loan Manager", loan.loanManagerName)
+                                DetailRow("Total Received Amount", CurrencyUtils.formatINR(loan.receivedAmt))
                             }
                         }
                     }
                 }
                 is LoanDetailsUIState.Error -> {
-                    ErrorState(message = state.message, onRetry = { /* Handle retry or navigate back */ })
+                    ErrorState(message = state.message, onRetry = { })
                 }
             }
         }

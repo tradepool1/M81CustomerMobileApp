@@ -1,7 +1,9 @@
 package com.mentorhomeloans
 
 import android.app.Application
+import com.mentorhomeloans.BuildConfig
 import dagger.hilt.android.HiltAndroidApp
+import timber.log.Timber
 
 /**
  * Application entry point.
@@ -10,4 +12,11 @@ import dagger.hilt.android.HiltAndroidApp
  * set up the application-level dependency injection component.
  */
 @HiltAndroidApp
-class MentorApplication : Application()
+class MentorApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
+    }
+}
