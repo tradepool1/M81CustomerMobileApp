@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mentor Home Loans</string>
+
+    <!-- General / Common -->
+    <string name="action_skip">Skip</string>
+    <string name="action_next">Next</string>
+    <string name="action_get_started">Get Started</string>
+    <string name="action_submit">Submit</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_try_again">Try Again</string>
+    <string name="action_back">Back</string>
+
+    <!-- Onboarding Screen -->
+    <string name="onboarding_title_1">Manage Home Loans</string>
+    <string name="onboarding_desc_1">Track details, outstanding principal values, next EMI dates, and interest rates easily.</string>
+    <string name="onboarding_title_2">Stay on Top of EMIs</string>
+    <string name="onboarding_desc_2">Never miss a payment. Get reminders and view your upcoming EMI schedules.</string>
+    <string name="onboarding_title_3">Smart Insights</string>
+    <string name="onboarding_desc_3">Analyze your loan with detailed insights and make smarter financial decisions.</string>
+
+    <!-- Login Screen -->
+    <string name="login_welcome_title">Welcome Back!</string>
+    <string name="login_welcome_subtitle">Login to continue to your account</string>
+    <string name="hint_branch_code">Branch Code</string>
+    <string name="hint_mobile_number">Mobile Number</string>
+    <string name="btn_send_otp">Send OTP</string>
+    <string name="btn_verify_login">Verify &amp; Login</string>
+    <string name="btn_request_registration">Request Registration</string>
+    <string name="btn_change_mobile">Change Mobile Number</string>
+    <string name="otp_sent_format">OTP sent to %1$s</string>
+    <string name="hint_verification_code">Verification Code</string>
+
+    <!-- Request Registration Screen -->
+    <string name="request_reg_title">Request Registration</string>
+    <string name="label_name">Name</string>
+    <string name="label_email">Email</string>
+    <string name="label_mobile_no">Mobile No</string>
+    <string name="label_city">City</string>
+    <string name="label_branch_no">Branch No</string>
+    <string name="msg_request_submitted">Registration request submitted successfully!</string>
+
+    <!-- Dashboard Screen -->
+    <string name="dashboard_title">Mentor Loans</string>
+    <string name="section_quick_actions">Quick Actions</string>
+    <string name="section_loan_overview">Loan Overview</string>
+    <string name="label_loan_amount">Loan Amount</string>
+    <string name="label_amount_paid">Amount Paid</string>
+    <string name="label_interest_paid">Interest Paid</string>
+    <string name="btn_view_loan_details">View Loan Details</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_subtitle">Manage your app preferences and account</string>
+    <string name="setting_delete_account">Delete Account</string>
+    <string name="setting_delete_account_sub">Permanently remove your account</string>
+    <string name="setting_about_app">About App</string>
+    <string name="setting_about_app_sub">Version info, terms and privacy policy</string>
+    <string name="setting_logout">Logout</string>
+    <string name="setting_logout_sub">Sign out from your account</string>
+    <string name="logout_dialog_title">Logout</string>
+    <string name="logout_dialog_desc">Are you sure you want to sign out from your account?</string>
+    <string name="logout_confirm_yes">Yes, Logout</string>
+</resources>

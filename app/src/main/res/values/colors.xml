@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand primary: #006EB1 -->
+    <color name="mentor_blue">#FF006EB1</color>
+    <color name="mentor_blue_dark">#FF004F80</color>
+    <color name="mentor_blue_deep">#FF003A5C</color>
+    <color name="mentor_blue_mid">#FF1A85C2</color>
+    <color name="mentor_blue_light">#FFB3D9F0</color>
+    <color name="mentor_blue_pale">#FFE3F2FD</color>
+    <color name="mentor_blue_xpale">#FFF0F8FF</color>
+
+    <!-- Accent -->
+    <color name="mentor_orange">#FFF9A01B</color>
+    <color name="mentor_green">#FF00BFA5</color>
+
+    <!-- Neutrals -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="neutral_gray">#FF9E9E9E</color>
+    <color name="neutral_surface">#FFF8F9FE</color>
+</resources>
