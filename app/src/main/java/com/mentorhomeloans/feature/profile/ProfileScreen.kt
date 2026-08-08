@@ -50,7 +50,7 @@ fun ProfileScreen(
     LaunchedEffect(settingsUiState) {
         if (settingsUiState is SettingsUIState.LogoutSuccess) {
             navController.navigate(Screen.Login.route) {
-                popUpTo(Screen.Dashboard.route) { inclusive = true }
+                popUpTo(0) { inclusive = true }
             }
         }
     }

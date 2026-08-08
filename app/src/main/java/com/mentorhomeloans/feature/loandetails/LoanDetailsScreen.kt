@@ -95,7 +95,7 @@ fun LoanDetailsScreen(
                                 Divider(color = Color.LightGray)
                                 DetailRow("Outstanding (POS)", CurrencyUtils.formatINR(loan.outstandingAmount))
                                 Divider(color = Color.LightGray)
-                                DetailRow("Case IRR (Interest)", "${loan.interestRate}%")
+                                DetailRow("Interest Rate", CurrencyUtils.formatInterestRate(loan.interestRate))
                             }
                         }
 

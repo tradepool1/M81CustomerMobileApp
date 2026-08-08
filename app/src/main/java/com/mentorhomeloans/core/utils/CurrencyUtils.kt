@@ -20,4 +20,16 @@ object CurrencyUtils {
             "₹${amount.toLong()}"
         }
     }
+
+    /**
+     * Formats interest rate to round off.
+     */
+    fun formatInterestRate(rate: Double): String {
+        return try {
+            val df = java.text.DecimalFormat("#.##")
+            df.format(rate) + "%"
+        } catch (e: Exception) {
+            "${rate}%"
+        }
+    }
 }

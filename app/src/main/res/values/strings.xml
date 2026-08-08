@@ -47,6 +47,7 @@
     <string name="section_loan_overview">Loan Overview</string>
     <string name="label_loan_amount">Loan Amount</string>
     <string name="label_amount_paid">Amount Paid</string>
+    <string name="label_principle_paid">Principal Paid</string>
     <string name="label_interest_paid">Interest Paid</string>
     <string name="btn_view_loan_details">View Loan Details</string>
 

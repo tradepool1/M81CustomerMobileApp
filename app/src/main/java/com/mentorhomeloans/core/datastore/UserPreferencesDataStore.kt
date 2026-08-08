@@ -25,12 +25,14 @@ class UserPreferencesDataStore @Inject constructor(
     private val themeKey = booleanPreferencesKey(Constants.PREF_KEY_THEME)
     private val onboardingKey = booleanPreferencesKey(Constants.PREF_KEY_ONBOARDING)
     private val notificationKey = booleanPreferencesKey(Constants.PREF_KEY_NOTIFICATIONS)
+    private val isLoggedInKey = booleanPreferencesKey(Constants.PREF_KEY_IS_LOGGED_IN)
 
     val userPreferencesFlow: Flow<UserPreferences> = context.dataStore.data.map { preferences ->
         UserPreferences(
             isDarkModeEnabled = if (preferences.contains(themeKey)) preferences[themeKey] else null,
             areNotificationsEnabled = preferences[notificationKey] ?: true,
-            isOnboardingCompleted = preferences[onboardingKey] ?: false
+            isOnboardingCompleted = preferences[onboardingKey] ?: false,
+            isLoggedIn = preferences[isLoggedInKey] ?: false
         )
     }
 
@@ -49,6 +51,12 @@ class UserPreferencesDataStore @Inject constructor(
     suspend fun setNotificationsEnabled(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[notificationKey] = enabled
+        }
+    }
+
+    suspend fun setLoggedIn(isLoggedIn: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[isLoggedInKey] = isLoggedIn
         }
     }
 }

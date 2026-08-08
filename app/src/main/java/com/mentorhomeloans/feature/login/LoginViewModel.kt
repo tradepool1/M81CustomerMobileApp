@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.mentorhomeloans.core.common.Result
 import com.mentorhomeloans.domain.usecase.auth.SendOtpUseCase
 import com.mentorhomeloans.domain.usecase.auth.VerifyOtpUseCase
+import com.mentorhomeloans.core.datastore.UserPreferencesDataStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val sendOtpUseCase: SendOtpUseCase,
-    private val verifyOtpUseCase: VerifyOtpUseCase
+    private val verifyOtpUseCase: VerifyOtpUseCase,
+    private val preferencesDataStore: UserPreferencesDataStore
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<LoginUIState>(LoginUIState.EnterMobile)
@@ -40,7 +42,7 @@ class LoginViewModel @Inject constructor(
             _uiState.value = LoginUIState.Loading
             when (val result = verifyOtpUseCase(mobileNumber, otp, sessionId)) {
                 is Result.Success -> {
-                    // Token gets cached internally inside sessionManager via AuthRepository
+                    preferencesDataStore.setOnboardingCompleted(true)
                     _uiState.value = LoginUIState.Success("CUST00123")
                 }
                 is Result.Error -> _uiState.value = LoginUIState.Error(result.message)

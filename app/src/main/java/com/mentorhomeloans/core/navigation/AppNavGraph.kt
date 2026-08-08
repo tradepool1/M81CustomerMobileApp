@@ -1,8 +1,6 @@
 package com.mentorhomeloans.core.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -39,22 +37,13 @@ import com.mentorhomeloans.feature.transactions.TransactionsViewModel
  * Uses Hilt-injected ViewModels via [hiltViewModel].
  *
  * @param navController The application-level [NavHostController].
- * @param isSessionActive Whether the user currently has a valid JWT session.
- * @param preferencesDataStore DataStore providing onboarding completion state.
+ * @param preferencesDataStore DataStore providing theme/notification state.
  */
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
-    isSessionActive: Boolean,
     preferencesDataStore: UserPreferencesDataStore
 ) {
-    val prefs by preferencesDataStore.userPreferencesFlow.collectAsState(
-        initial = com.mentorhomeloans.core.datastore.UserPreferences(
-            isDarkModeEnabled = null,
-            areNotificationsEnabled = true,
-            isOnboardingCompleted = false
-        )
-    )
 
     NavHost(
         navController = navController,
@@ -63,11 +52,7 @@ fun AppNavGraph(
 
         // ── Splash ─────────────────────────────────────────────────────────
         composable(Screen.Splash.route) {
-            SplashScreen(
-                navController = navController,
-                isSessionActive = isSessionActive,
-                isOnboardingCompleted = prefs.isOnboardingCompleted
-            )
+            SplashScreen(navController = navController)
         }
 
         // ── Onboarding ─────────────────────────────────────────────────────

@@ -62,7 +62,7 @@ class EncryptedPrefsManager @Inject constructor(
      */
     fun saveString(key: String, value: String?) {
         try {
-            securePrefs.edit().putString(key, value).apply()
+            securePrefs.edit().putString(key, value).commit()
         } catch (e: Exception) {
             Timber.e(e, "Error saving string to securePrefs key: $key")
         }
@@ -85,7 +85,7 @@ class EncryptedPrefsManager @Inject constructor(
      */
     fun clearAll() {
         try {
-            securePrefs.edit().clear().apply()
+            securePrefs.edit().clear().commit()
         } catch (e: Exception) {
             Timber.e(e, "Error clearing securePrefs")
         }

@@ -25,6 +25,7 @@ object Constants {
     const val PREF_KEY_THEME         = "is_dark_mode"
     const val PREF_KEY_ONBOARDING    = "is_onboarding_completed"
     const val PREF_KEY_NOTIFICATIONS = "notifications_enabled"
+    const val PREF_KEY_IS_LOGGED_IN  = "is_logged_in"
 
     // ── Database ──────────────────────────────────────────────────────────────
     const val DATABASE_NAME = "mentor_home_loans_db"

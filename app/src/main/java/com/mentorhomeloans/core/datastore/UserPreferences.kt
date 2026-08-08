@@ -10,5 +10,6 @@ package com.mentorhomeloans.core.datastore
 data class UserPreferences(
     val isDarkModeEnabled: Boolean?,
     val areNotificationsEnabled: Boolean,
-    val isOnboardingCompleted: Boolean
+    val isOnboardingCompleted: Boolean,
+    val isLoggedIn: Boolean = false
 )

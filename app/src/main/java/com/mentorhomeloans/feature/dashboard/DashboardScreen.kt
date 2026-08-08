@@ -222,7 +222,7 @@ fun DashboardScreen(
                                             horizontalArrangement = Arrangement.SpaceBetween
                                         ) {
                                             Text(text = "Outstanding Principal: ${CurrencyUtils.formatINR(loan.outstandingAmount)}", color = Color.White.copy(alpha = 0.8f), fontSize = 12.sp)
-                                            Text(text = "ROI: ${loan.interestRate}%", color = Color.White.copy(alpha = 0.8f), fontSize = 12.sp)
+                                            Text(text = "Interest Rate: ${CurrencyUtils.formatInterestRate(loan.interestRate)}", color = Color.White.copy(alpha = 0.8f), fontSize = 12.sp)
                                         }
                                         Spacer(modifier = Modifier.height(8.dp))
                                         LinearProgressIndicator(
@@ -335,9 +335,9 @@ fun DashboardScreen(
                                 val interestPaid = amountPaid * 0.28 // Just a mocked ratio for UI
                                 
                                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                    OverviewStatItem(label = stringResource(R.string.label_loan_amount), value = CurrencyUtils.formatINR(loan.sanctionAmount), icon = Icons.Default.CurrencyRupee, iconColor = MentorBlue)
-                                    Divider(modifier = Modifier.height(40.dp).width(1.dp), color = Color.LightGray)
                                     OverviewStatItem(label = stringResource(R.string.label_amount_paid), value = CurrencyUtils.formatINR(amountPaid), icon = Icons.Default.PieChart, iconColor = Color(0xFFFF7F00))
+                                    Divider(modifier = Modifier.height(40.dp).width(1.dp), color = Color.LightGray)
+                                    OverviewStatItem(label = stringResource(R.string.label_principle_paid), value = CurrencyUtils.formatINR(loan.principlReceived), icon = Icons.Default.CurrencyRupee, iconColor = MentorBlue)
                                     Divider(modifier = Modifier.height(40.dp).width(1.dp), color = Color.LightGray)
                                     OverviewStatItem(label = stringResource(R.string.label_interest_paid), value = CurrencyUtils.formatINR(interestPaid), icon = Icons.Default.Percent, iconColor = Color(0xFF43A047))
                                 }

@@ -1,6 +1,7 @@
 package com.mentorhomeloans.data.repository
 
 import com.mentorhomeloans.core.common.Result
+import com.mentorhomeloans.core.datastore.UserPreferencesDataStore
 import com.mentorhomeloans.core.security.SessionManager
 import com.mentorhomeloans.domain.repository.AuthRepository
 import kotlinx.coroutines.delay
@@ -13,7 +14,8 @@ import javax.inject.Singleton
  */
 @Singleton
 class MockAuthRepository @Inject constructor(
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    private val preferencesDataStore: UserPreferencesDataStore
 ) : AuthRepository {
 
     override suspend fun sendOtp(mobileNumber: String): Result<String> {
@@ -34,6 +36,8 @@ class MockAuthRepository @Inject constructor(
                 customerId = "CUST00123",
                 mobileNumber = mobileNumber
             )
+            preferencesDataStore.setLoggedIn(true)
+            preferencesDataStore.setOnboardingCompleted(true)
             return Result.Success(true)
         }
         return Result.Error(IllegalArgumentException("Invalid OTP. Try 123456"))
@@ -41,6 +45,7 @@ class MockAuthRepository @Inject constructor(
 
     override suspend fun logout(): Result<Unit> {
         sessionManager.clearSession()
+        preferencesDataStore.setLoggedIn(false)
         return Result.Success(Unit)
     }
 

@@ -8,10 +8,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.compose.rememberNavController
+import com.mentorhomeloans.core.datastore.UserPreferences
 import com.mentorhomeloans.core.datastore.UserPreferencesDataStore
 import com.mentorhomeloans.core.navigation.AppNavGraph
 import com.mentorhomeloans.core.ui.theme.MentorTheme
-import com.mentorhomeloans.domain.usecase.auth.GetSessionStatusUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -19,13 +19,14 @@ import javax.inject.Inject
  * Single Activity entry point for the MentorApp.
  *
  * Hosts the Jetpack Compose UI, provides edge-to-edge rendering,
- * and bootstraps the Navigation Graph with theme and session context.
+ * and bootstraps the Navigation Graph with theme context.
+ *
+ * Session / login detection is fully handled inside [SplashViewModel]
+ * to avoid the race condition where initial = false would fire
+ * navigation before DataStore emitted the persisted value.
  */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    @Inject
-    lateinit var getSessionStatusUseCase: GetSessionStatusUseCase
 
     @Inject
     lateinit var preferencesDataStore: UserPreferencesDataStore
@@ -35,13 +36,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            val sessionActive by getSessionStatusUseCase().collectAsState(initial = false)
-
             val prefs by preferencesDataStore.userPreferencesFlow.collectAsState(
-                initial = com.mentorhomeloans.core.datastore.UserPreferences(
+                initial = UserPreferences(
                     isDarkModeEnabled = null,
                     areNotificationsEnabled = true,
-                    isOnboardingCompleted = false
+                    isOnboardingCompleted = false,
+                    isLoggedIn = false
                 )
             )
 
@@ -52,7 +52,6 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 AppNavGraph(
                     navController = navController,
-                    isSessionActive = sessionActive,
                     preferencesDataStore = preferencesDataStore
                 )
             }

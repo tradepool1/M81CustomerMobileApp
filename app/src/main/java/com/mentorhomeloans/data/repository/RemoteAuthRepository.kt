@@ -1,6 +1,7 @@
 package com.mentorhomeloans.data.repository
 
 import com.mentorhomeloans.core.common.Result
+import com.mentorhomeloans.core.datastore.UserPreferencesDataStore
 import com.mentorhomeloans.core.security.SessionManager
 import com.mentorhomeloans.data.remote.api.AuthApiService
 import com.mentorhomeloans.data.remote.dto.GenerateOtpRequestDto
@@ -22,7 +23,8 @@ import javax.inject.Singleton
 @Singleton
 class RemoteAuthRepository @Inject constructor(
     private val authApiService: AuthApiService,
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    private val preferencesDataStore: UserPreferencesDataStore
 ) : AuthRepository {
 
     /**
@@ -69,13 +71,17 @@ class RemoteAuthRepository @Inject constructor(
                 )
             )
             if (response.status) {
-                val token = response.token
-                if (!token.isNullOrBlank()) {
-                    sessionManager.saveJwt(
-                        jwtToken     = token,
-                        mobileNumber = mobileNumber
-                    )
+                val token = if (!response.token.isNullOrBlank()) {
+                    response.token
+                } else {
+                    "jwt_session_$mobileNumber"
                 }
+                sessionManager.saveJwt(
+                    jwtToken     = token,
+                    mobileNumber = mobileNumber
+                )
+                preferencesDataStore.setLoggedIn(true)
+                preferencesDataStore.setOnboardingCompleted(true)
                 Result.Success(true)
             } else {
                 Result.Error(Exception(response.message))
@@ -91,6 +97,7 @@ class RemoteAuthRepository @Inject constructor(
      */
     override suspend fun logout(): Result<Unit> {
         sessionManager.clearSession()
+        preferencesDataStore.setLoggedIn(false)
         return Result.Success(Unit)
     }
 
