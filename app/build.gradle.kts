@@ -35,7 +35,6 @@ android {
         debug {
             isMinifyEnabled        = false
             applicationIdSuffix    = ".debug"
-            versionNameSuffix      = "-DEBUG"
             buildConfigField("Boolean", "ENABLE_LOGGING",  "true")
             buildConfigField("String",  "BASE_URL",        "\"https://192.168.200.11:4204/api/MobileApp/\"")
             buildConfigField("Boolean", "TRUST_ALL_CERTS", "true")
