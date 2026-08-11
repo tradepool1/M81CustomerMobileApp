@@ -1,5 +1,9 @@
 package com.mentorhomeloans.feature.login
 
+import android.Manifest
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -71,6 +75,14 @@ fun LoginScreen(
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { _ -> }
+
+    LaunchedEffect(Unit) {
+        permissionLauncher.launch(Manifest.permission.READ_PHONE_STATE)
+    }
 
     var mobileNumber by remember { mutableStateOf("") }
     var branchCode by remember { mutableStateOf("") }
