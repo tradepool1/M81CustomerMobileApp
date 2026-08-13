@@ -25,4 +25,9 @@ interface LoanApiService {
     suspend fun getAllLoanDetails(
         @Body request: GetLoanDetailsRequestDto
     ): List<GetLoanDetailsResponseItemDto>
+
+    @POST("Get_Loan_Details_By_Loan_Id")
+    suspend fun getLoanDetailsByLoanId(
+        @retrofit2.http.Query("loanId") loanId: String
+    ): List<com.mentorhomeloans.data.remote.dto.GetLoanDetailByLoanIdResponseDto>
 }

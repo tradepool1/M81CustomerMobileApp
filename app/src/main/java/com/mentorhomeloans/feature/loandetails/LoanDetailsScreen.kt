@@ -71,8 +71,9 @@ fun LoanDetailsScreen(
                             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
-                                Text("Account Number", fontSize = 12.sp, color = Color.Gray)
-                                Text(loan.accountNumber, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                                val prodName = if (loan.productName.isNotBlank()) loan.productName else loan.loanType.displayName
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(prodName, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = MentorBlue)
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text("Status: ${loan.status.displayName}", fontSize = 14.sp, color = Color(0xFF00BFA5), fontWeight = FontWeight.SemiBold)
                             }
@@ -86,16 +87,35 @@ fun LoanDetailsScreen(
                         ) {
                             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                                 Text("Financial Details", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MentorBlue)
-                                Divider(color = Color.LightGray)
+                                HorizontalDivider(color = Color.LightGray)
                                 DetailRow("Loan Amount", CurrencyUtils.formatINR(loan.sanctionAmount))
-                                Divider(color = Color.LightGray)
+                                HorizontalDivider(color = Color.LightGray)
                                 DetailRow("Disbursement Amount", CurrencyUtils.formatINR(loan.disbursedAmount))
-                                Divider(color = Color.LightGray)
-                                DetailRow("Net Finance", CurrencyUtils.formatINR(loan.netFinance))
-                                Divider(color = Color.LightGray)
+                                if (loan.netFinance > 0) {
+                                    HorizontalDivider(color = Color.LightGray)
+                                    DetailRow("Net Finance", CurrencyUtils.formatINR(loan.netFinance))
+                                }
+                                HorizontalDivider(color = Color.LightGray)
                                 DetailRow("Outstanding (POS)", CurrencyUtils.formatINR(loan.outstandingAmount))
-                                Divider(color = Color.LightGray)
-                                DetailRow("Interest Rate", CurrencyUtils.formatInterestRate(loan.interestRate))
+                                HorizontalDivider(color = Color.LightGray)
+                                DetailRow("Interest Rate (IRR)", CurrencyUtils.formatInterestRate(loan.interestRate))
+                            }
+                        }
+
+                        // Tenure Details Card
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(containerColor = Color.White),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                                Text("Tenure Details", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MentorBlue)
+                                HorizontalDivider(color = Color.LightGray)
+                                DetailRow("Total Loan Tenure", "${loan.tenure} Months")
+                                HorizontalDivider(color = Color.LightGray)
+                                DetailRow("Received Tenure", "${loan.receivedTenure} Month${if (loan.receivedTenure != 1) "s" else ""}")
+                                HorizontalDivider(color = Color.LightGray)
+                                DetailRow("Remaining Tenure", "${loan.remainingTenure} Month${if (loan.remainingTenure != 1) "s" else ""}")
                             }
                         }
 
@@ -107,22 +127,30 @@ fun LoanDetailsScreen(
                         ) {
                             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                                 Text("Repayment Summary", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MentorBlue)
-                                Divider(color = Color.LightGray)
+                                HorizontalDivider(color = Color.LightGray)
                                 DetailRow("EMI Amount", CurrencyUtils.formatINR(loan.emiAmount))
-                                Divider(color = Color.LightGray)
-                                DetailRow("EMI Due Date", if (loan.nextEmiDate.isNotBlank()) loan.nextEmiDate else "N/A")
-                                Divider(color = Color.LightGray)
-                                DetailRow("Principal Received", CurrencyUtils.formatINR(loan.principlReceived))
-                                Divider(color = Color.LightGray)
-                                DetailRow("Interest Received", CurrencyUtils.formatINR(loan.interestReceived))
-                                Divider(color = Color.LightGray)
-                                DetailRow("Total Received Amount", CurrencyUtils.formatINR(loan.receivedAmt))
+                                if (loan.nextEmiDate.isNotBlank()) {
+                                    HorizontalDivider(color = Color.LightGray)
+                                    DetailRow("EMI Due Date", loan.nextEmiDate)
+                                }
+                                if (loan.principlReceived > 0) {
+                                    HorizontalDivider(color = Color.LightGray)
+                                    DetailRow("Principal Received", CurrencyUtils.formatINR(loan.principlReceived))
+                                }
+                                if (loan.interestReceived > 0) {
+                                    HorizontalDivider(color = Color.LightGray)
+                                    DetailRow("Interest Received", CurrencyUtils.formatINR(loan.interestReceived))
+                                }
+                                if (loan.receivedAmt > 0) {
+                                    HorizontalDivider(color = Color.LightGray)
+                                    DetailRow("Total Received Amount", CurrencyUtils.formatINR(loan.receivedAmt))
+                                }
                             }
                         }
                     }
                 }
                 is LoanDetailsUIState.Error -> {
-                    ErrorState(message = state.message, onRetry = { })
+                    ErrorState(message = state.message, onRetry = { viewModel.loadDetails() })
                 }
             }
         }

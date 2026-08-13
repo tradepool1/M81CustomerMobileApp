@@ -34,7 +34,7 @@ class LoanDetailsViewModel @Inject constructor(
         loadDetails()
     }
 
-    private fun loadDetails() {
+    fun loadDetails() {
         viewModelScope.launch {
             _uiState.value = LoanDetailsUIState.Loading
             getLoanDetailsUseCase(loanId).collect { result ->

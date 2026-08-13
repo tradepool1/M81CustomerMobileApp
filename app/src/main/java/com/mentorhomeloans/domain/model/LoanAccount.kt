@@ -55,7 +55,9 @@ data class LoanAccount(
     val principlReceived: Double = 0.0,
     val interestReceived: Double = 0.0,
     val netFinance: Double = 0.0,
-    val receivedAmt: Double = 0.0
+    val receivedAmt: Double = 0.0,
+    val productName: String = "",
+    val receivedTenure: Int = 0
 ) {
     /**
      * Computes repayment progress as a float between 0f and 1f.
@@ -88,6 +90,7 @@ enum class LoanType(val displayName: String) {
 enum class LoanStatus(val displayName: String) {
     ACTIVE("Active"),
     CLOSED("Closed"),
+    COMPLETED("Completed"),
     NPA("NPA"),
     FORECLOSED("Foreclosed"),
     WRITTEN_OFF("Written Off"),

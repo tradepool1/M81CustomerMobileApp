@@ -21,7 +21,7 @@ class MockLoanRepository @Inject constructor(
 ) : LoanRepository {
 
     private val mockLoan1 = LoanAccount(
-        id = "loan_99120",
+        id = "24559",
         accountNumber = "ML202688019",
         loanType = LoanType.HOME_LOAN,
         sanctionAmount = 4500000.0,

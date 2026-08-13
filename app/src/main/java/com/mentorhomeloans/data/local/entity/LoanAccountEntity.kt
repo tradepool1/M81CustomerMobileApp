@@ -29,5 +29,11 @@ data class LoanAccountEntity(
     val totalEmiCount: Int,
     val status: String,
     val branchName: String,
-    val loanManagerName: String
+    val loanManagerName: String,
+    val principlReceived: Double = 0.0,
+    val interestReceived: Double = 0.0,
+    val netFinance: Double = 0.0,
+    val receivedAmt: Double = 0.0,
+    val productName: String = "",
+    val receivedTenure: Int = 0
 )

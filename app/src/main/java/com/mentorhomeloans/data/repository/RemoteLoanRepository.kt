@@ -50,11 +50,28 @@ class RemoteLoanRepository @Inject constructor(
 
     override fun getLoanById(loanId: String): Flow<Result<LoanAccount>> = flow {
         emit(Result.Loading)
-        loanDao.getLoanAccount(loanId).collect { entity ->
-            if (entity != null) {
-                emit(Result.Success(LoanMapper.toDomain(entity)))
+        try {
+            val dtoList = loanApiService.getLoanDetailsByLoanId(loanId)
+            if (dtoList.isNotEmpty()) {
+                val domainModel = LoanMapper.fromLoanDetailByIdDtoToDomain(dtoList.first())
+                loanDao.insertLoanAccount(LoanMapper.toEntity(domainModel))
+                emit(Result.Success(domainModel))
             } else {
-                emit(Result.Error(Exception("Account not found")))
+                loanDao.getLoanAccount(loanId).collect { entity ->
+                    if (entity != null) {
+                        emit(Result.Success(LoanMapper.toDomain(entity)))
+                    } else {
+                        emit(Result.Error(Exception("Account not found")))
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            loanDao.getLoanAccount(loanId).collect { entity ->
+                if (entity != null) {
+                    emit(Result.Success(LoanMapper.toDomain(entity)))
+                } else {
+                    emit(Result.Error(e))
+                }
             }
         }
     }

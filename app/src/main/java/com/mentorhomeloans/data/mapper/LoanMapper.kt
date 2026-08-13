@@ -1,6 +1,7 @@
 package com.mentorhomeloans.data.mapper
 
 import com.mentorhomeloans.data.local.entity.LoanAccountEntity
+import com.mentorhomeloans.data.remote.dto.GetLoanDetailByLoanIdResponseDto
 import com.mentorhomeloans.data.remote.dto.GetLoanDetailsResponseItemDto
 import com.mentorhomeloans.domain.model.LoanAccount
 import com.mentorhomeloans.domain.model.LoanStatus
@@ -34,7 +35,13 @@ object LoanMapper {
             totalEmiCount = entity.totalEmiCount,
             status = LoanStatus.entries.find { it.name == entity.status } ?: LoanStatus.ACTIVE,
             branchName = entity.branchName,
-            loanManagerName = entity.loanManagerName
+            loanManagerName = entity.loanManagerName,
+            principlReceived = entity.principlReceived,
+            interestReceived = entity.interestReceived,
+            netFinance = entity.netFinance,
+            receivedAmt = entity.receivedAmt,
+            productName = entity.productName,
+            receivedTenure = entity.receivedTenure
         )
     }
 
@@ -61,15 +68,23 @@ object LoanMapper {
             totalEmiCount = domain.totalEmiCount,
             status = domain.status.name,
             branchName = domain.branchName,
-            loanManagerName = domain.loanManagerName
+            loanManagerName = domain.loanManagerName,
+            principlReceived = domain.principlReceived,
+            interestReceived = domain.interestReceived,
+            netFinance = domain.netFinance,
+            receivedAmt = domain.receivedAmt,
+            productName = domain.productName,
+            receivedTenure = domain.receivedTenure
         )
     }
 
     fun fromApiDtoToDomain(dto: GetLoanDetailsResponseItemDto): LoanAccount {
-        val loanAcNo = dto.loanAcNo ?: "N/A"
+        val loanIdStr = dto.loanId?.toString() ?: dto.loanAcNo ?: "N/A"
+        val loanAcNo = dto.loanAcNo ?: loanIdStr
         val statusEnum = when (dto.loanStatus?.lowercase()) {
             "regular", "active" -> LoanStatus.ACTIVE
             "closed" -> LoanStatus.CLOSED
+            "completed" -> LoanStatus.COMPLETED
             "npa" -> LoanStatus.NPA
             else -> LoanStatus.ACTIVE
         }
@@ -92,7 +107,7 @@ object LoanMapper {
         val receivedAmt = dto.receivedAmt ?: 0.0
 
         return LoanAccount(
-            id = loanAcNo,
+            id = loanIdStr,
             accountNumber = loanAcNo,
             loanType = loanTypeEnum,
             sanctionAmount = loanAmount,
@@ -118,6 +133,64 @@ object LoanMapper {
             interestReceived = interestReceived,
             netFinance = netFinance,
             receivedAmt = receivedAmt
+        )
+    }
+
+    fun fromLoanDetailByIdDtoToDomain(dto: GetLoanDetailByLoanIdResponseDto): LoanAccount {
+        val loanIdStr = dto.loanId?.toString() ?: "N/A"
+        val loanAcNoStr = dto.loanAcNo ?: loanIdStr
+        val productNameStr = dto.productName ?: "Home Loan"
+        val statusEnum = when (dto.loanStatus?.lowercase()) {
+            "regular", "active" -> LoanStatus.ACTIVE
+            "closed" -> LoanStatus.CLOSED
+            "completed" -> LoanStatus.COMPLETED
+            "npa" -> LoanStatus.NPA
+            else -> LoanStatus.ACTIVE
+        }
+        val loanTypeEnum = when {
+            productNameStr.contains("LAP", ignoreCase = true) -> LoanType.LAP
+            productNameStr.contains("HL", ignoreCase = true) || productNameStr.contains("HOME", ignoreCase = true) -> LoanType.HOME_LOAN
+            else -> LoanType.HOME_LOAN
+        }
+
+        val loanAmount = dto.loanAmount ?: 0.0
+        val pos = dto.pos ?: 0.0
+        val emiAmount = dto.loanEMIAmount ?: 0.0
+        val interestRate = dto.caseIRR ?: 0.0
+        val disbursedAmt = dto.disbursementAmt ?: 0.0
+        val tenure = dto.loanTenure ?: 0
+        val receivedTenure = dto.receivedTenure ?: 0
+        val remainingTenure = dto.remainingTenure ?: 0
+
+        return LoanAccount(
+            id = loanIdStr,
+            accountNumber = loanAcNoStr,
+            loanType = loanTypeEnum,
+            sanctionAmount = loanAmount,
+            disbursedAmount = disbursedAmt,
+            outstandingAmount = pos,
+            interestRate = interestRate,
+            tenure = tenure,
+            remainingTenure = remainingTenure,
+            emiAmount = emiAmount,
+            nextEmiDate = "",
+            nextEmiAmount = emiAmount,
+            isOverdue = false,
+            overdueAmount = 0.0,
+            overdueEmiCount = 0,
+            startDate = "",
+            maturityDate = "",
+            paidEmiCount = receivedTenure,
+            totalEmiCount = tenure,
+            status = statusEnum,
+            branchName = "Head Office",
+            loanManagerName = "",
+            principlReceived = 0.0,
+            interestReceived = 0.0,
+            netFinance = 0.0,
+            receivedAmt = 0.0,
+            productName = productNameStr,
+            receivedTenure = receivedTenure
         )
     }
 }

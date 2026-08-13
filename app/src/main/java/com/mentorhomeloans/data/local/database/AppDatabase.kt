@@ -18,7 +18,7 @@ import com.mentorhomeloans.data.local.entity.TransactionEntity
         TransactionEntity::class,
         NotificationEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
