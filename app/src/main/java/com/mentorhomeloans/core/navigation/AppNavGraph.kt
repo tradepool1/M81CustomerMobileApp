@@ -98,7 +98,10 @@ fun AppNavGraph(
         }
 
         // ── Profile ────────────────────────────────────────────────────────
-        composable(Screen.Profile.route) {
+        composable(
+            route = Screen.Profile.route,
+            arguments = listOf(androidx.navigation.navArgument("loanId") { type = androidx.navigation.NavType.StringType })
+        ) {
             val vm: ProfileViewModel = hiltViewModel()
             val settingsVm: SettingsViewModel = hiltViewModel()
             ProfileScreen(navController = navController, viewModel = vm, settingsViewModel = settingsVm)

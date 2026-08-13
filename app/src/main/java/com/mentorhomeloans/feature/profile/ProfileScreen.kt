@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.mentorhomeloans.R
 import com.mentorhomeloans.core.navigation.Screen
-import com.mentorhomeloans.core.ui.components.BottomNavBar
 import com.mentorhomeloans.core.ui.components.ErrorState
 import com.mentorhomeloans.feature.settings.SettingsUIState
 import com.mentorhomeloans.feature.settings.SettingsViewModel
@@ -208,23 +207,6 @@ fun ProfileScreen(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFFF8F9FE))
             )
         },
-        bottomBar = {
-            BottomNavBar(
-                currentRoute = Screen.Settings.route,
-                onNavigate = { route ->
-                    if (route != Screen.Settings.route) {
-                        navController.navigate(route) {
-                            popUpTo(Screen.Dashboard.route) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    } else {
-                        // We pop back to settings root if settings is clicked while on profile
-                        navController.popBackStack(Screen.Settings.route, false)
-                    }
-                }
-            )
-        },
         containerColor = Color(0xFFF8F9FE)
     ) { paddingValues ->
         Box(
@@ -298,13 +280,34 @@ fun ProfileScreen(
                                 Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
                                 ProfileDetailRow(icon = Icons.Outlined.Badge, label = "Customer ID", value = user.customerId)
                                 Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
+                                if (!user.customerType.isNullOrBlank()) {
+                                    ProfileDetailRow(icon = Icons.Outlined.WorkOutline, label = "Customer Type", value = user.customerType)
+                                    Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
+                                }
                                 ProfileDetailRow(icon = Icons.Outlined.Phone, label = "Mobile Number", value = user.mobileNumber)
                                 Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
                                 ProfileDetailRow(icon = Icons.Outlined.Email, label = "Email Address", value = user.email ?: "Not Added")
                                 Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
-                                ProfileDetailRow(icon = Icons.Outlined.CreditCard, label = "PAN Card", value = user.panNumber)
+                                if (!user.genderAge.isNullOrBlank()) {
+                                    ProfileDetailRow(icon = Icons.Outlined.Wc, label = "Gender & Age", value = user.genderAge)
+                                    Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
+                                }
+                                ProfileDetailRow(icon = Icons.Outlined.CreditCard, label = "KYC Doc Number", value = user.panNumber)
                                 Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
-                                
+                                if (!user.relationWithHirer.isNullOrBlank()) {
+                                    ProfileDetailRow(icon = Icons.Outlined.FamilyRestroom, label = "Relation", value = user.relationWithHirer)
+                                    Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
+                                }
+                                if (!user.existingCustomer.isNullOrBlank()) {
+                                    ProfileDetailRow(icon = Icons.Outlined.AccountBalance, label = "Existing Customer", value = user.existingCustomer)
+                                    Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
+                                }
+                                val displayAddress = user.presentAddressText ?: user.address.line1
+                                if (displayAddress.isNotBlank()) {
+                                    ProfileAddressRow(icon = Icons.Outlined.Home, label = "Present Address", address = displayAddress)
+                                    Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
+                                }
+
                                 // KYC Status Row
                                 Row(
                                     modifier = Modifier
@@ -345,8 +348,9 @@ fun ProfileScreen(
 
                         Spacer(Modifier.height(16.dp))
 
-                        // ── Co-Applicant Details Card ───────────────────────────
-                        if (user.coApplicant != null) {
+                        // ── Co-Applicant Details Card(s) ───────────────────────────
+                        val coList = if (user.coApplicantsList.isNotEmpty()) user.coApplicantsList else listOfNotNull(user.coApplicant)
+                        coList.forEach { co ->
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -387,18 +391,38 @@ fun ProfileScreen(
                                                 .background(Color(0xFFE8F5E9), RoundedCornerShape(12.dp))
                                                 .padding(horizontal = 10.dp, vertical = 4.dp)
                                         ) {
-                                            Text("Co-Applicant", color = Color(0xFF43A047), fontSize = 10.sp, fontWeight = FontWeight.SemiBold)
+                                            Text(co.customerType ?: "Co-Applicant", color = Color(0xFF43A047), fontSize = 10.sp, fontWeight = FontWeight.SemiBold)
                                         }
                                     }
 
                                     Spacer(Modifier.height(16.dp))
 
                                     // Rows
-                                    ProfileDetailRow(icon = Icons.Outlined.PersonOutline, label = "Name", value = user.coApplicant.name, iconTint = Color(0xFF43A047))
+                                    ProfileDetailRow(icon = Icons.Outlined.PersonOutline, label = "Name", value = co.name, iconTint = Color(0xFF43A047))
+                                    if (!co.customerId.isNullOrBlank()) {
+                                        Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
+                                        ProfileDetailRow(icon = Icons.Outlined.Badge, label = "Customer ID", value = co.customerId, iconTint = Color(0xFF43A047))
+                                    }
                                     Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
-                                    ProfileDetailRow(icon = Icons.Outlined.FavoriteBorder, label = "Relationship", value = user.coApplicant.relationship, iconTint = Color(0xFF43A047))
+                                    ProfileDetailRow(icon = Icons.Outlined.FavoriteBorder, label = "Relationship", value = co.relationship, iconTint = Color(0xFF43A047))
                                     Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
-                                    ProfileDetailRow(icon = Icons.Outlined.Phone, label = "Mobile Number", value = user.coApplicant.mobileNumber, iconTint = Color(0xFF43A047))
+                                    ProfileDetailRow(icon = Icons.Outlined.Phone, label = "Mobile Number", value = co.mobileNumber, iconTint = Color(0xFF43A047))
+                                    if (!co.email.isNullOrBlank()) {
+                                        Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
+                                        ProfileDetailRow(icon = Icons.Outlined.Email, label = "Email Address", value = co.email, iconTint = Color(0xFF43A047))
+                                    }
+                                    if (!co.genderAge.isNullOrBlank()) {
+                                        Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
+                                        ProfileDetailRow(icon = Icons.Outlined.Wc, label = "Gender & Age", value = co.genderAge, iconTint = Color(0xFF43A047))
+                                    }
+                                    if (co.panNumber.isNotBlank()) {
+                                        Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
+                                        ProfileDetailRow(icon = Icons.Outlined.CreditCard, label = "KYC Doc Number", value = co.panNumber, iconTint = Color(0xFF43A047))
+                                    }
+                                    if (!co.presentAddressText.isNullOrBlank()) {
+                                        Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
+                                        ProfileAddressRow(icon = Icons.Outlined.Home, label = "Present Address", address = co.presentAddressText, iconTint = Color(0xFF43A047))
+                                    }
                                 }
                             }
                             Spacer(Modifier.height(16.dp))
@@ -601,6 +625,57 @@ fun ProfileDetailRow(
         )
         Spacer(Modifier.width(16.dp))
         Text(label, fontSize = 13.sp, color = Color.Gray, modifier = Modifier.weight(1f))
-        Text(value, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+        Text(
+            text = value,
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black,
+            modifier = Modifier.weight(1.4f),
+            textAlign = androidx.compose.ui.text.style.TextAlign.End
+        )
+    }
+}
+
+/**
+ * A specialised row for address fields that wraps the address text across multiple
+ * lines instead of squishing it to the right.
+ */
+@Composable
+fun ProfileAddressRow(
+    icon: ImageVector,
+    label: String,
+    address: String,
+    iconTint: Color = MentorBlue
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp),
+        verticalAlignment = Alignment.Top
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = iconTint,
+            modifier = Modifier
+                .size(20.dp)
+                .padding(top = 2.dp)
+        )
+        Spacer(Modifier.width(16.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = label,
+                fontSize = 13.sp,
+                color = Color.Gray
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = address,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+                lineHeight = 18.sp
+            )
+        }
     }
 }

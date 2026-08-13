@@ -65,14 +65,15 @@ fun DashboardScreen(
                             modifier = Modifier.size(28.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = stringResource(R.string.dashboard_title), fontWeight = FontWeight.Bold, color = MentorBlue)
+                        Text(text = stringResource(R.string.dashboard_title), fontWeight = FontWeight.Bold, color = MentorBlue,fontSize = 12.sp)
                     }
                 },
                 actions = {
                     IconButton(onClick = { navController.navigate(Screen.Notifications.route) }) {
                         Icon(imageVector = Icons.Default.Notifications, contentDescription = "Alerts", tint = Color.Gray)
                     }
-                    IconButton(onClick = { navController.navigate(Screen.Profile.route) }) {
+                    val selectedLoanId = (uiState as? DashboardUIState.Success)?.selectedLoan?.id ?: "24559"
+                    IconButton(onClick = { navController.navigate(Screen.Profile.createRoute(selectedLoanId)) }) {
                         Icon(imageVector = Icons.Default.AccountCircle, contentDescription = "Profile", tint = Color.Gray)
                     }
                 },
@@ -330,16 +331,14 @@ fun DashboardScreen(
                                 Text(text = stringResource(R.string.section_loan_overview), fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MentorBlue)
                                 Spacer(modifier = Modifier.height(16.dp))
                                 
-                                val amountPaid = loan.sanctionAmount - loan.outstandingAmount
+
                                 // Mock interest paid for now
-                                val interestPaid = amountPaid * 0.28 // Just a mocked ratio for UI
-                                
                                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                    OverviewStatItem(label = stringResource(R.string.label_amount_paid), value = CurrencyUtils.formatINR(amountPaid), icon = Icons.Default.PieChart, iconColor = Color(0xFFFF7F00))
+                                    OverviewStatItem(label = stringResource(R.string.label_amount_paid), value = CurrencyUtils.formatINR(loan.receivedAmt), icon = Icons.Default.PieChart, iconColor = Color(0xFFFF7F00))
                                     Divider(modifier = Modifier.height(40.dp).width(1.dp), color = Color.LightGray)
                                     OverviewStatItem(label = stringResource(R.string.label_principle_paid), value = CurrencyUtils.formatINR(loan.principlReceived), icon = Icons.Default.CurrencyRupee, iconColor = MentorBlue)
                                     Divider(modifier = Modifier.height(40.dp).width(1.dp), color = Color.LightGray)
-                                    OverviewStatItem(label = stringResource(R.string.label_interest_paid), value = CurrencyUtils.formatINR(interestPaid), icon = Icons.Default.Percent, iconColor = Color(0xFF43A047))
+                                    OverviewStatItem(label = stringResource(R.string.label_interest_paid), value = CurrencyUtils.formatINR(loan.interestReceived), icon = Icons.Default.Percent, iconColor = Color(0xFF43A047))
                                 }
                                 
                                 Spacer(modifier = Modifier.height(16.dp))

@@ -42,7 +42,7 @@
     <string name="msg_request_submitted">Registration request submitted successfully!</string>
 
     <!-- Dashboard Screen -->
-    <string name="dashboard_title">Mentor Loans</string>
+    <string name="dashboard_title">MENTOR HOME LOANS INDIA LIMITED</string>
     <string name="section_quick_actions">Quick Actions</string>
     <string name="section_loan_overview">Loan Overview</string>
     <string name="label_loan_amount">Loan Amount</string>

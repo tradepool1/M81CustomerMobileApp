@@ -65,8 +65,18 @@ data class LoanAccount(
      * @return Fraction of total loan amount repaid.
      */
     val repaymentProgress: Float
-        get() = if (totalEmiCount == 0) 0f
-                else (paidEmiCount.toFloat() / totalEmiCount.toFloat()).coerceIn(0f, 1f)
+        get() {
+            if (sanctionAmount <= 0.0) return 0f
+
+            // Principal paid = Sanctioned - Current Outstanding Principal
+            val repaidPrincipal = sanctionAmount - outstandingAmount
+
+            // Prevent negative values if outstanding exceeds sanction due to interest/penalties
+            if (repaidPrincipal <= 0.0) return 0f
+
+            return (repaidPrincipal / sanctionAmount).toFloat().coerceIn(0f, 1f)
+        }
+
 }
 
 /**

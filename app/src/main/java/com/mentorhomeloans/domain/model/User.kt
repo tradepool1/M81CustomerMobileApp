@@ -29,7 +29,13 @@ data class User(
     val address: Address,
     val coApplicant: CoApplicant?,
     val kycStatus: KycStatus,
-    val profileImageUrl: String?
+    val profileImageUrl: String?,
+    val genderAge: String? = null,
+    val existingCustomer: String? = null,
+    val customerType: String? = null,
+    val relationWithHirer: String? = null,
+    val presentAddressText: String? = null,
+    val coApplicantsList: List<CoApplicant> = emptyList()
 )
 
 /**
@@ -54,16 +60,26 @@ data class Address(
 /**
  * Represents a co-applicant associated with the loan.
  *
- * @property name         Co-applicant's full name.
- * @property relationship Relationship to the primary applicant.
- * @property mobileNumber Co-applicant's contact number.
- * @property panNumber    Co-applicant's PAN (masked).
+ * @property name               Co-applicant's full name.
+ * @property relationship       Relationship to the primary applicant.
+ * @property mobileNumber       Co-applicant's contact number.
+ * @property panNumber          Co-applicant's PAN (masked).
+ * @property email              Co-applicant's email address.
+ * @property genderAge          Co-applicant's gender & age string.
+ * @property presentAddressText Co-applicant's residential address string.
+ * @property customerType       Co-applicant's type designation (e.g. Co-Hirer).
+ * @property customerId         Co-applicant's ID number.
  */
 data class CoApplicant(
     val name: String,
     val relationship: String,
     val mobileNumber: String,
-    val panNumber: String
+    val panNumber: String,
+    val email: String? = null,
+    val genderAge: String? = null,
+    val presentAddressText: String? = null,
+    val customerType: String? = null,
+    val customerId: String? = null
 )
 
 /**

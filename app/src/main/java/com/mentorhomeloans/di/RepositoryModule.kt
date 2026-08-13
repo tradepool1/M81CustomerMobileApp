@@ -2,6 +2,7 @@ package com.mentorhomeloans.di
 
 import com.mentorhomeloans.data.repository.RemoteAuthRepository
 import com.mentorhomeloans.data.repository.RemoteLoanRepository
+import com.mentorhomeloans.data.repository.RemoteProfileRepository
 import com.mentorhomeloans.data.repository.MockDocumentRepository
 import com.mentorhomeloans.data.repository.MockLoanRepository
 import com.mentorhomeloans.data.repository.MockNotificationRepository
@@ -58,7 +59,7 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindProfileRepository(impl: MockProfileRepository): ProfileRepository
+    abstract fun bindProfileRepository(impl: RemoteProfileRepository): ProfileRepository
 
     @Binds
     @Singleton

@@ -39,8 +39,8 @@ fun BottomNavBar(
 
     NavigationBar(
         modifier        = modifier,
-        containerColor  = MentorBluePale,       // light #E3F2FD – brand-tinted background
-        contentColor    = MentorBlue
+        containerColor  = com.mentorhomeloans.ui.theme.MentorBlueDeep,
+        contentColor    = Color.White
     ) {
         items.forEach { (route, label, icon) ->
             val selected = currentRoute == route
@@ -50,11 +50,11 @@ fun BottomNavBar(
                 icon     = { Icon(imageVector = icon, contentDescription = label) },
                 label    = { Text(text = label) },
                 colors   = NavigationBarItemDefaults.colors(
-                    selectedIconColor       = MentorBlue,
-                    selectedTextColor       = MentorBlue,
-                    indicatorColor          = Color(0xFFCCE5F5),   // soft brand-blue indicator
-                    unselectedIconColor     = Color(0xFF7AABCC),
-                    unselectedTextColor     = Color(0xFF7AABCC)
+                    selectedIconColor       = Color.White,
+                    selectedTextColor       = Color.White,
+                    indicatorColor          = com.mentorhomeloans.ui.theme.MentorBlueDark,
+                    unselectedIconColor     = Color.White.copy(alpha = 0.6f),
+                    unselectedTextColor     = Color.White.copy(alpha = 0.6f)
                 )
             )
         }
