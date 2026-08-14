@@ -76,3 +76,22 @@ enum class RepaymentStatus(val displayName: String) {
     PARTIALLY_PAID("Partially Paid"),
     UPCOMING("Upcoming")
 }
+
+/**
+ * Domain model for a single EMI row returned by the
+ * GetLoanRepaymentDetails API.
+ *
+ * @property period             Sequential EMI period number.
+ * @property emiAmount          Total EMI amount (INR).
+ * @property emiDueDate         Due date string as returned by the server.
+ * @property emiStatus          Payment status: "Paid" or "Overdue".
+ * @property totalPrinciplePaid Cumulative principal paid up to this period.
+ */
+data class LoanRepaymentDetail(
+    val period: Int,
+    val emiAmount: Double,
+    val emiDueDate: String,
+    val emiStatus: String,
+    val totalPrinciplePaid: Double
+)
+

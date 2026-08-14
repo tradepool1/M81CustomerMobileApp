@@ -92,7 +92,10 @@ fun AppNavGraph(
         }
 
         // ── Repayment Schedule ─────────────────────────────────────────────
-        composable(Screen.Repayment.route) {
+        composable(
+            route = Screen.Repayment.route,
+            arguments = listOf(androidx.navigation.navArgument("loanId") { type = androidx.navigation.NavType.StringType })
+        ) {
             val vm: RepaymentViewModel = hiltViewModel()
             RepaymentScreen(navController = navController, viewModel = vm)
         }

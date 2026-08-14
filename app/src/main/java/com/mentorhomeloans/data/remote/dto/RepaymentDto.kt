@@ -36,3 +36,17 @@ data class RepaymentSummaryDto(
     @SerializedName("foreClosureAmount") val foreClosureAmount: Double,
     @SerializedName("schedule") val schedule: List<RepaymentScheduleItemDto>
 )
+
+/**
+ * Single item returned by the GetLoanRepaymentDetails API endpoint.
+ * Maps directly from the server response:
+ * { TotalPrinciplePaid, Period, EMIPaidOD, EMIAmount, EMIDueDate }
+ */
+data class LoanRepaymentDetailItemDto(
+    @SerializedName("TotalPrinciplePaid") val totalPrinciplePaid: Double,
+    @SerializedName("Period") val period: Int,
+    @SerializedName("EMIPaidOD") val emiPaidOD: String,
+    @SerializedName("EMIAmount") val emiAmount: Double,
+    @SerializedName("EMIDueDate") val emiDueDate: String
+)
+

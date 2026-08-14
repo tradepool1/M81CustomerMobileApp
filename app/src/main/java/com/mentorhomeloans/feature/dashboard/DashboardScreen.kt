@@ -294,7 +294,7 @@ fun DashboardScreen(
                                 icon = Icons.Default.CurrencyRupee, // In some compose versions CurrencyRupee isn't available, but let's assume it is or use Payment
                                 iconColor = Color(0xFFFF7F00),
                                 bgColor = Color.White
-                            ) { navController.navigate(Screen.Repayment.route) }
+                            ) { navController.navigate(Screen.Repayment.createRoute(loan.id)) }
                             
                             QuickActionCard(
                                 label = "Statements",

@@ -1,6 +1,7 @@
 package com.mentorhomeloans.data.repository
 
 import com.mentorhomeloans.core.common.Result
+import com.mentorhomeloans.domain.model.LoanRepaymentDetail
 import com.mentorhomeloans.domain.model.RepaymentScheduleItem
 import com.mentorhomeloans.domain.model.RepaymentStatus
 import com.mentorhomeloans.domain.model.RepaymentSummary
@@ -75,4 +76,11 @@ class MockRepaymentRepository @Inject constructor() : RepaymentRepository {
         delay(800)
         return Result.Success(3710500.0)
     }
+
+    override fun getLoanRepaymentDetails(loanId: String): Flow<Result<List<LoanRepaymentDetail>>> = flow {
+        emit(Result.Loading)
+        delay(500)
+        emit(Result.Success(emptyList()))
+    }
 }
+

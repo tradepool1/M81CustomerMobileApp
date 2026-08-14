@@ -8,6 +8,7 @@ import com.mentorhomeloans.data.repository.MockLoanRepository
 import com.mentorhomeloans.data.repository.MockNotificationRepository
 import com.mentorhomeloans.data.repository.MockProfileRepository
 import com.mentorhomeloans.data.repository.MockRepaymentRepository
+import com.mentorhomeloans.data.repository.RemoteRepaymentRepository
 import com.mentorhomeloans.data.repository.MockStatementRepository
 import com.mentorhomeloans.data.repository.MockSupportRepository
 import com.mentorhomeloans.data.repository.MockTransactionRepository
@@ -55,7 +56,7 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindRepaymentRepository(impl: MockRepaymentRepository): RepaymentRepository
+    abstract fun bindRepaymentRepository(impl: RemoteRepaymentRepository): RepaymentRepository
 
     @Binds
     @Singleton

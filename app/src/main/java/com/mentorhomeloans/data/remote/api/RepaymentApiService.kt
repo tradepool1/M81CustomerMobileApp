@@ -1,8 +1,10 @@
 package com.mentorhomeloans.data.remote.api
 
 import com.mentorhomeloans.data.remote.dto.ApiResponse
+import com.mentorhomeloans.data.remote.dto.LoanRepaymentDetailItemDto
 import com.mentorhomeloans.data.remote.dto.RepaymentSummaryDto
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -21,4 +23,14 @@ interface RepaymentApiService {
         @Path("loanAccountId") loanAccountId: String,
         @Query("date") date: String
     ): ApiResponse<Double>
+
+    /**
+     * Fetches the EMI-wise repayment schedule for a given loan.
+     * POST /GetLoanRepaymentDetails?loanId={loanId}
+     */
+    @POST("GetLoanRepaymentDetails")
+    suspend fun getLoanRepaymentDetails(
+        @Query("loanId") loanId: String
+    ): List<LoanRepaymentDetailItemDto>
 }
+

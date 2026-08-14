@@ -1,6 +1,7 @@
 package com.mentorhomeloans.domain.repository
 
 import com.mentorhomeloans.core.common.Result
+import com.mentorhomeloans.domain.model.LoanRepaymentDetail
 import com.mentorhomeloans.domain.model.RepaymentSummary
 import kotlinx.coroutines.flow.Flow
 
@@ -25,4 +26,13 @@ interface RepaymentRepository {
      * @return [Result.Success] with the foreclosure amount in INR.
      */
     suspend fun calculateForeclosure(loanAccountId: String, foreClosureDate: String): Result<Double>
+
+    /**
+     * Fetches EMI-wise repayment details from the GetLoanRepaymentDetails API.
+     *
+     * @param loanId The numeric loan ID (e.g. "23212").
+     * @return A [Flow] of [Result] wrapping the list of [LoanRepaymentDetail].
+     */
+    fun getLoanRepaymentDetails(loanId: String): Flow<Result<List<LoanRepaymentDetail>>>
 }
+
