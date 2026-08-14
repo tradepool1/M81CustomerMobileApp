@@ -35,7 +35,9 @@ data class User(
     val customerType: String? = null,
     val relationWithHirer: String? = null,
     val presentAddressText: String? = null,
-    val coApplicantsList: List<CoApplicant> = emptyList()
+    val coApplicantsList: List<CoApplicant> = emptyList(),
+    val kycDocName: String? = null,
+    val kycDocNumber: String? = null
 )
 
 /**
@@ -79,7 +81,9 @@ data class CoApplicant(
     val genderAge: String? = null,
     val presentAddressText: String? = null,
     val customerType: String? = null,
-    val customerId: String? = null
+    val customerId: String? = null,
+    val kycDocName: String? = null,
+    val kycDocNumber: String? = null
 )
 
 /**

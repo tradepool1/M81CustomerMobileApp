@@ -38,10 +38,14 @@ class MockProfileRepository @Inject constructor() : ProfileRepository {
             name = "Priya Malhotra",
             relationship = "Spouse",
             mobileNumber = "9876500112",
-            panNumber = "XYZWP5678A"
+            panNumber = "XYZWP5678A",
+            kycDocName = "PAN CARD",
+            kycDocNumber = "XYZWP5678A"
         ),
         kycStatus = KycStatus.VERIFIED,
-        profileImageUrl = null
+        profileImageUrl = null,
+        kycDocName = "AADHAAR CARD",
+        kycDocNumber = "248804998570"
     )
 
     override fun getProfile(customerId: String): Flow<Result<User>> = flow {

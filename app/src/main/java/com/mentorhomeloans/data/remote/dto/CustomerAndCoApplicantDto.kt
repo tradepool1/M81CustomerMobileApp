@@ -8,6 +8,7 @@ import com.google.gson.annotations.SerializedName
 data class CustomerAndCoApplicantDto(
     @SerializedName("Int_Id") val intId: Long?,
     @SerializedName("KYC_DocId") val kycDocId: Int?,
+    @SerializedName("KYC_DocName") val kycDocName: String?,
     @SerializedName("KYC_DocNumber") val kycDocNumber: String?,
     @SerializedName("CustomerId") val customerId: Long?,
     @SerializedName("CustomerName") val customerName: String?,

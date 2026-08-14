@@ -59,7 +59,9 @@ class RemoteProfileRepository @Inject constructor(
                         genderAge = coItem.genderAge?.trim(),
                         presentAddressText = formatAddress(coItem.presentAddress),
                         customerType = coItem.customerType?.trim() ?: "Co-Borrower",
-                        customerId = coItem.customerId?.toString()
+                        customerId = coItem.customerId?.toString(),
+                        kycDocName = coItem.kycDocName?.trim(),
+                        kycDocNumber = coItem.kycDocNumber?.trim()
                     )
                 }
 
@@ -90,7 +92,9 @@ class RemoteProfileRepository @Inject constructor(
                     customerType = primaryDto.customerType?.trim() ?: "Hirer",
                     relationWithHirer = formatRelation(primaryDto.relationWithHirer),
                     presentAddressText = formattedPrimaryAddr,
-                    coApplicantsList = coApplicantsList
+                    coApplicantsList = coApplicantsList,
+                    kycDocName = primaryDto.kycDocName?.trim(),
+                    kycDocNumber = primaryDto.kycDocNumber?.trim()
                 )
 
                 emit(Result.Success(user))
@@ -123,7 +127,9 @@ class RemoteProfileRepository @Inject constructor(
                     genderAge = "Male, 50 Yr",
                     presentAddressText = "PLOT NO 136/6 JAI BHAWANI NAGAR, Indore, 452002",
                     customerType = "Co-Borrower",
-                    customerId = "48705"
+                    customerId = "48705",
+                    kycDocName = "PAN CARD",
+                    kycDocNumber = "XYZWP5678A"
                 ),
                 kycStatus = KycStatus.VERIFIED,
                 profileImageUrl = null,
@@ -142,7 +148,9 @@ class RemoteProfileRepository @Inject constructor(
                         genderAge = "Male, 50 Yr",
                         presentAddressText = "PLOT NO 136/6 JAI BHAWANI NAGAR, Indore, 452002",
                         customerType = "Co-Borrower",
-                        customerId = "48705"
+                        customerId = "48705",
+                        kycDocName = "PAN CARD",
+                        kycDocNumber = "XYZWP5678A"
                     ),
                     CoApplicant(
                         name = "DEEPAK BIRLA",
@@ -153,9 +161,13 @@ class RemoteProfileRepository @Inject constructor(
                         genderAge = "Male, 31 Yr",
                         presentAddressText = "PLOT NO 136/6 JAI BHAWANI NAGAR, Indore, 452002",
                         customerType = "Co-Borrower",
-                        customerId = "48706"
+                        customerId = "48706",
+                        kycDocName = "AADHAAR CARD",
+                        kycDocNumber = "248804998570"
                     )
-                )
+                ),
+                kycDocName = "AADHAAR CARD",
+                kycDocNumber = "248804998570"
             )
             emit(Result.Success(fallbackProfile))
         }

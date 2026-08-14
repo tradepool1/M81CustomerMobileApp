@@ -292,8 +292,17 @@ fun ProfileScreen(
                                     ProfileDetailRow(icon = Icons.Outlined.Wc, label = "Gender & Age", value = user.genderAge)
                                     Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
                                 }
-                                ProfileDetailRow(icon = Icons.Outlined.CreditCard, label = "KYC Doc Number", value = user.panNumber)
-                                Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
+                                if (!user.kycDocName.isNullOrBlank()) {
+                                    ProfileDetailRow(icon = Icons.Outlined.Assignment, label = "KYC Document", value = user.kycDocName)
+                                    Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
+                                }
+                                if (!user.kycDocNumber.isNullOrBlank()) {
+                                    ProfileDetailRow(icon = Icons.Outlined.CreditCard, label = "KYC Doc Number", value = user.kycDocNumber)
+                                    Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
+                                } else {
+                                    ProfileDetailRow(icon = Icons.Outlined.CreditCard, label = "KYC Doc Number", value = user.panNumber)
+                                    Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
+                                }
                                 if (!user.relationWithHirer.isNullOrBlank()) {
                                     ProfileDetailRow(icon = Icons.Outlined.FamilyRestroom, label = "Relation", value = user.relationWithHirer)
                                     Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
@@ -415,7 +424,14 @@ fun ProfileScreen(
                                         Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
                                         ProfileDetailRow(icon = Icons.Outlined.Wc, label = "Gender & Age", value = co.genderAge, iconTint = Color(0xFF43A047))
                                     }
-                                    if (co.panNumber.isNotBlank()) {
+                                    if (!co.kycDocName.isNullOrBlank()) {
+                                        Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
+                                        ProfileDetailRow(icon = Icons.Outlined.Assignment, label = "KYC Document", value = co.kycDocName, iconTint = Color(0xFF43A047))
+                                    }
+                                    if (!co.kycDocNumber.isNullOrBlank()) {
+                                        Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
+                                        ProfileDetailRow(icon = Icons.Outlined.CreditCard, label = "KYC Doc Number", value = co.kycDocNumber, iconTint = Color(0xFF43A047))
+                                    } else if (co.panNumber.isNotBlank()) {
                                         Divider(color = Color(0xFFF0F0F0), thickness = 1.dp)
                                         ProfileDetailRow(icon = Icons.Outlined.CreditCard, label = "KYC Doc Number", value = co.panNumber, iconTint = Color(0xFF43A047))
                                     }
