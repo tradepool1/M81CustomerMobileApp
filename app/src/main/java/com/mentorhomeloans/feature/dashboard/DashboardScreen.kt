@@ -301,7 +301,7 @@ fun DashboardScreen(
                                 icon = Icons.Default.Description,
                                 iconColor = MentorBlue,
                                 bgColor = Color.White
-                            ) { navController.navigate(Screen.Statements.route) }
+                            ) { navController.navigate(Screen.Statements.createRoute(loan.id)) }
                             
                             QuickActionCard(
                                 label = "Documents",

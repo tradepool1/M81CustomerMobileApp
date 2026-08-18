@@ -1,6 +1,7 @@
 package com.mentorhomeloans.domain.repository
 
 import com.mentorhomeloans.core.common.Result
+import com.mentorhomeloans.domain.model.LoanSOADetail
 import com.mentorhomeloans.domain.model.Statement
 import kotlinx.coroutines.flow.Flow
 
@@ -8,6 +9,14 @@ import kotlinx.coroutines.flow.Flow
  * Repository interface for loan statement operations.
  */
 interface StatementRepository {
+
+    /**
+     * Fetches Statement of Account (SOA) transactions for a given loan ID.
+     *
+     * @param loanId The numeric loan account identifier.
+     * @return [Flow] emitting [Result] with list of [LoanSOADetail].
+     */
+    fun getCusLoanSOADetails(loanId: String): Flow<Result<List<LoanSOADetail>>>
 
     /**
      * Fetches the list of available statements for a loan account.
@@ -33,3 +42,4 @@ interface StatementRepository {
      */
     suspend fun downloadStatementCsv(statement: Statement): Result<String>
 }
+

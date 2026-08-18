@@ -80,7 +80,10 @@ fun AppNavGraph(
         }
 
         // ── Statements ─────────────────────────────────────────────────────
-        composable(Screen.Statements.route) {
+        composable(
+            route = Screen.Statements.route,
+            arguments = listOf(androidx.navigation.navArgument("loanId") { type = androidx.navigation.NavType.StringType })
+        ) {
             val vm: StatementsViewModel = hiltViewModel()
             StatementsScreen(navController = navController, viewModel = vm)
         }
