@@ -129,9 +129,12 @@ fun LoanDetailsScreen(
                                 Text("Repayment Summary", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MentorBlue)
                                 HorizontalDivider(color = Color.LightGray)
                                 DetailRow("EMI Amount", CurrencyUtils.formatINR(loan.emiAmount))
-                                if (loan.nextEmiDate.isNotBlank()) {
+                                if (loan.hasNextEmiDate) {
                                     HorizontalDivider(color = Color.LightGray)
                                     DetailRow("EMI Due Date", loan.nextEmiDate)
+                                } else {
+                                    HorizontalDivider(color = Color.LightGray)
+                                    DetailRow("Maturity Date", if (loan.maturityDate.isNotBlank()) loan.maturityDate else "Loan Matured")
                                 }
                                 if (loan.principlReceived > 0) {
                                     HorizontalDivider(color = Color.LightGray)

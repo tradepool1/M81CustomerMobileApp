@@ -239,44 +239,93 @@ fun DashboardScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Next EMI Details
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(containerColor = Color.White),
-                            shape = RoundedCornerShape(16.dp),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
-                                horizontalArrangement = Arrangement.SpaceEvenly,
-                                verticalAlignment = Alignment.CenterVertically
+                        // Next EMI Details or Loan Matured Section
+                        if (loan.hasNextEmiDate) {
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = CardDefaults.cardColors(containerColor = Color.White),
+                                shape = RoundedCornerShape(16.dp),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                             ) {
-                                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(40.dp)
-                                            .background(Color(0xFFFFF3E0), RoundedCornerShape(8.dp)),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Icon(imageVector = Icons.Outlined.CalendarMonth, contentDescription = null, tint = Color(0xFFF9A01B))
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    horizontalArrangement = Arrangement.SpaceEvenly,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(40.dp)
+                                                .background(Color(0xFFFFF3E0), RoundedCornerShape(8.dp)),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Icon(imageVector = Icons.Outlined.CalendarMonth, contentDescription = null, tint = Color(0xFFF9A01B))
+                                        }
+                                        Spacer(modifier = Modifier.width(12.dp))
+                                        Column {
+                                            Text(text = "Next EMI Details", fontSize = 11.sp, color = Color.Gray)
+                                            Text(text = CurrencyUtils.formatINR(loan.emiAmount), fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                                        }
                                     }
-                                    Spacer(modifier = Modifier.width(12.dp))
-                                    Column {
-                                        Text(text = "Next EMI Details", fontSize = 11.sp, color = Color.Gray)
-                                        Text(text = CurrencyUtils.formatINR(loan.emiAmount), fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                                    
+                                    Divider(modifier = Modifier.height(40.dp).width(1.dp), color = Color.LightGray)
+                                    
+                                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f).padding(start = 16.dp)) {
+                                        Icon(imageVector = Icons.Outlined.CalendarMonth, contentDescription = null, tint = MentorBlue)
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Column {
+                                            Text(text = "Due On", fontSize = 11.sp, color = Color.Gray)
+                                            Text(text = loan.nextEmiDate, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MentorBlue)
+                                        }
                                     }
                                 }
-                                
-                                Divider(modifier = Modifier.height(40.dp).width(1.dp), color = Color.LightGray)
-                                
-                                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f).padding(start = 16.dp)) {
-                                    Icon(imageVector = Icons.Outlined.CalendarMonth, contentDescription = null, tint = MentorBlue)
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Column {
-                                        Text(text = "Due On", fontSize = 11.sp, color = Color.Gray)
-                                        Text(text = loan.nextEmiDate, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MentorBlue)
+                            }
+                        } else {
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = CardDefaults.cardColors(containerColor = Color.White),
+                                shape = RoundedCornerShape(16.dp),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    horizontalArrangement = Arrangement.SpaceEvenly,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(40.dp)
+                                                .background(Color(0xFFE8F5E9), RoundedCornerShape(8.dp)),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Icon(imageVector = Icons.Default.CheckCircle, contentDescription = null, tint = Color(0xFF2E7D32))
+                                        }
+                                        Spacer(modifier = Modifier.width(12.dp))
+                                        Column {
+                                            Text(text = "Loan Status", fontSize = 11.sp, color = Color.Gray)
+                                            Text(text = "Loan Matured", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0xFF2E7D32))
+                                        }
+                                    }
+                                    
+                                    Divider(modifier = Modifier.height(40.dp).width(1.dp), color = Color.LightGray)
+                                    
+                                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f).padding(start = 16.dp)) {
+                                        Icon(imageVector = Icons.Outlined.CalendarMonth, contentDescription = null, tint = MentorBlue)
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Column {
+                                            Text(text = "Maturity Date", fontSize = 11.sp, color = Color.Gray)
+                                            Text(
+                                                text = if (loan.maturityDate.isNotBlank()) loan.maturityDate else "Matured",
+                                                fontSize = 14.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = MentorBlue
+                                            )
+                                        }
                                     }
                                 }
                             }

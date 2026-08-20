@@ -34,11 +34,13 @@
 
     <!-- Request Registration Screen -->
     <string name="request_reg_title">Request Registration</string>
-    <string name="label_name">Name</string>
+    <string name="label_full_name">Full Name</string>
     <string name="label_email">Email</string>
     <string name="label_mobile_no">Mobile No</string>
-    <string name="label_city">City</string>
-    <string name="label_branch_no">Branch No</string>
+    <string name="label_loan_no">Loan No</string>
+    <string name="label_pan_no">PAN No</string>
+    <string name="label_state">Select State</string>
+    <string name="label_branch">Select Branch</string>
     <string name="msg_request_submitted">Registration request submitted successfully!</string>
 
     <!-- Dashboard Screen -->

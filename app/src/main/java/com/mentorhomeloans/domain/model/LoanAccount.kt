@@ -77,6 +77,20 @@ data class LoanAccount(
             return (repaidPrincipal / sanctionAmount).toFloat().coerceIn(0f, 1f)
         }
 
+    /**
+     * True if the loan account has a valid upcoming EMI date.
+     */
+    val hasNextEmiDate: Boolean
+        get() = nextEmiDate.isNotBlank() && 
+                !nextEmiDate.equals("N/A", ignoreCase = true) && 
+                status != LoanStatus.CLOSED && 
+                status != LoanStatus.COMPLETED
+
+    /**
+     * True if the loan is matured / closed / completed or has no next EMI date.
+     */
+    val isMatured: Boolean
+        get() = !hasNextEmiDate
 }
 
 /**
