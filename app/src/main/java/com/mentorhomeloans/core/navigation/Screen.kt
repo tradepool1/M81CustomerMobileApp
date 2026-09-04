@@ -30,4 +30,8 @@ sealed class Screen(val route: String) {
         fun createRoute(loanId: String) = "loan_details/$loanId"
     }
     object RequestRegistration : Screen("request_registration")
+
+    object CmsContent : Screen("cms_content/{pageKey}") {
+        fun createRoute(pageKey: String) = "cms_content/$pageKey"
+    }
 }

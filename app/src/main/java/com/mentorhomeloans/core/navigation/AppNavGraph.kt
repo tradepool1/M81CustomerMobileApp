@@ -3,8 +3,10 @@ package com.mentorhomeloans.core.navigation
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.mentorhomeloans.core.datastore.UserPreferencesDataStore
 import com.mentorhomeloans.feature.dashboard.DashboardScreen
 import com.mentorhomeloans.feature.dashboard.DashboardViewModel
@@ -29,6 +31,9 @@ import com.mentorhomeloans.feature.support.SupportScreen
 import com.mentorhomeloans.feature.support.SupportViewModel
 import com.mentorhomeloans.feature.transactions.TransactionsScreen
 import com.mentorhomeloans.feature.transactions.TransactionsViewModel
+import com.mentorhomeloans.feature.login.RegistrationViewModel
+import com.mentorhomeloans.feature.cms.CmsScreen
+import com.mentorhomeloans.feature.cms.CmsViewModel
 
 /**
  * Root Navigation Graph for the MentorApp.
@@ -162,7 +167,25 @@ fun AppNavGraph(
 
         // ── Request Registration ───────────────────────────────────────────
         composable(Screen.RequestRegistration.route) {
-            com.mentorhomeloans.feature.login.RequestRegistrationScreen(navController = navController)
+            val vm: RegistrationViewModel = hiltViewModel()
+            com.mentorhomeloans.feature.login.RequestRegistrationScreen(
+                navController = navController,
+                viewModel     = vm
+            )
+        }
+
+        // ── CMS Content ────────────────────────────────────────────────────
+        composable(
+            route = Screen.CmsContent.route,
+            arguments = listOf(navArgument("pageKey") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val pageKey = backStackEntry.arguments?.getString("pageKey") ?: ""
+            val vm: CmsViewModel = hiltViewModel()
+            CmsScreen(
+                pageKey = pageKey,
+                viewModel = vm,
+                navController = navController
+            )
         }
     }
 }

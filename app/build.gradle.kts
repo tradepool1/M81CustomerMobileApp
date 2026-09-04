@@ -139,6 +139,7 @@ dependencies {
 
     // ── WorkManager ──────────────────────────────────────────────────────────
     implementation(libs.workmanager)
+    implementation(libs.androidx.startup)
 
     // ── Security ─────────────────────────────────────────────────────────────
     implementation(libs.security.crypto)

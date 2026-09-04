@@ -6,6 +6,7 @@ import com.mentorhomeloans.core.security.SessionManager
 import com.mentorhomeloans.data.remote.api.AuthApiService
 import com.mentorhomeloans.data.remote.dto.GenerateOtpRequestDto
 import com.mentorhomeloans.data.remote.dto.OtpVerificationRequestDto
+import com.mentorhomeloans.data.remote.dto.PageContentDto
 import com.mentorhomeloans.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -52,7 +53,7 @@ class RemoteAuthRepository @Inject constructor(
     /**
      * Calls OTP_Verification endpoint to verify [otp] for [mobileNumber].
      *
-     * On success, saves the returned JWT token to [SessionManager] via [saveJwt].
+     * On success, saves the returned tokens to [SessionManager] via [saveSession].
      * The [sessionId] parameter is the phone number (returned from [sendOtp])
      * and is used as the phoneNo in the verification request.
      *
@@ -71,14 +72,15 @@ class RemoteAuthRepository @Inject constructor(
                 )
             )
             if (response.status) {
-                val token = if (!response.token.isNullOrBlank()) {
-                    response.token
-                } else {
-                    "jwt_session_$mobileNumber"
-                }
-                sessionManager.saveJwt(
-                    jwtToken     = token,
-                    mobileNumber = mobileNumber
+                val accessToken = response.accessToken ?: "jwt_session_$mobileNumber"
+                val refreshToken = response.refreshToken ?: ""
+
+                sessionManager.saveSession(
+                    jwtToken      = accessToken,
+                    refreshToken  = refreshToken,
+                    mobileNumber  = mobileNumber,
+                    jwtExpiry     = response.accessTokenExpiresAt,
+                    refreshExpiry = response.refreshTokenExpiresAt
                 )
                 preferencesDataStore.setLoggedIn(true)
                 preferencesDataStore.setOnboardingCompleted(true)
@@ -106,5 +108,22 @@ class RemoteAuthRepository @Inject constructor(
      */
     override fun isSessionActive(): Flow<Boolean> {
         return sessionManager.isSessionActive
+    }
+
+    /**
+     * Fetches dynamic CMS page content (HTML) for the given [pageKey].
+     */
+    override suspend fun getPageContent(pageKey: String): Result<PageContentDto> {
+        return try {
+            val responseList = authApiService.getPageContent(pageKey)
+            val page = responseList.firstOrNull()
+            if (page != null) {
+                Result.Success(page)
+            } else {
+                Result.Error(Exception("No content found for $pageKey"))
+            }
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 }

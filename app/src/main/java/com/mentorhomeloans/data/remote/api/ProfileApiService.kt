@@ -1,6 +1,7 @@
 package com.mentorhomeloans.data.remote.api
 
 import com.mentorhomeloans.data.remote.dto.ApiResponse
+import com.mentorhomeloans.data.remote.dto.CommonResponseDto
 import com.mentorhomeloans.data.remote.dto.CustomerAndCoApplicantDto
 import com.mentorhomeloans.data.remote.dto.UserDto
 import retrofit2.http.Field
@@ -31,4 +32,13 @@ interface ProfileApiService {
     suspend fun getCustomerAndCoApplicantDetails(
         @Query("loanId") loanId: String
     ): List<CustomerAndCoApplicantDto>
+
+    /**
+     * Deletes the customer account associated with the given loan account number.
+     * POST /api/MobileApp/DeleteCustomer?loanAcNo=...
+     */
+    @POST("DeleteCustomer")
+    suspend fun deleteCustomer(
+        @Query("loanAcNo") loanAcNo: String
+    ): CommonResponseDto
 }

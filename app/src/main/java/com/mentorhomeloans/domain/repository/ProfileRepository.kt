@@ -25,4 +25,12 @@ interface ProfileRepository {
      * @return [Result.Success] with Unit on success.
      */
     suspend fun updateEmail(customerId: String, newEmail: String): Result<Unit>
+
+    /**
+     * Permanently deletes the customer account.
+     *
+     * @param loanAcNo The loan account number to identify the account.
+     * @return [Result.Success] with Unit on success.
+     */
+    suspend fun deleteAccount(loanAcNo: String): Result<Unit>
 }

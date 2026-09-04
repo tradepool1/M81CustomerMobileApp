@@ -22,21 +22,38 @@ class SessionManager @Inject constructor(
     /**
      * Saves full session tokens to secure storage.
      */
-    fun saveSession(jwtToken: String, refreshToken: String, customerId: String, mobileNumber: String) {
+    fun saveSession(
+        jwtToken: String,
+        refreshToken: String,
+        mobileNumber: String,
+        jwtExpiry: String? = null,
+        refreshExpiry: String? = null
+    ) {
         encryptedPrefs.saveString(Constants.SECURE_KEY_JWT, jwtToken)
         encryptedPrefs.saveString(Constants.SECURE_KEY_REFRESH, refreshToken)
-        encryptedPrefs.saveString(Constants.SECURE_KEY_CUSTOMER_ID, customerId)
         encryptedPrefs.saveString(Constants.SECURE_KEY_MOBILE, mobileNumber)
+        encryptedPrefs.saveString(Constants.SECURE_KEY_JWT_EXPIRY, jwtExpiry)
+        encryptedPrefs.saveString(Constants.SECURE_KEY_REFRESH_EXPIRY, refreshExpiry)
         _isSessionActive.value = true
     }
 
     /**
-     * Saves a JWT token and mobile number from the real OTP_Verification API response.
-     * Use this when the API does not return a refreshToken or customerId.
+     * Saves full session tokens including customerId to secure storage.
      */
-    fun saveJwt(jwtToken: String, mobileNumber: String) {
+    fun saveSession(
+        jwtToken: String,
+        refreshToken: String,
+        customerId: String,
+        mobileNumber: String,
+        jwtExpiry: String? = null,
+        refreshExpiry: String? = null
+    ) {
         encryptedPrefs.saveString(Constants.SECURE_KEY_JWT, jwtToken)
+        encryptedPrefs.saveString(Constants.SECURE_KEY_REFRESH, refreshToken)
+        encryptedPrefs.saveString(Constants.SECURE_KEY_CUSTOMER_ID, customerId)
         encryptedPrefs.saveString(Constants.SECURE_KEY_MOBILE, mobileNumber)
+        encryptedPrefs.saveString(Constants.SECURE_KEY_JWT_EXPIRY, jwtExpiry)
+        encryptedPrefs.saveString(Constants.SECURE_KEY_REFRESH_EXPIRY, refreshExpiry)
         _isSessionActive.value = true
     }
 
@@ -45,6 +62,13 @@ class SessionManager @Inject constructor(
      */
     fun getJwtToken(): String? {
         return encryptedPrefs.getString(Constants.SECURE_KEY_JWT)
+    }
+
+    /**
+     * Retrieves the current Refresh token.
+     */
+    fun getRefreshToken(): String? {
+        return encryptedPrefs.getString(Constants.SECURE_KEY_REFRESH)
     }
 
     /**

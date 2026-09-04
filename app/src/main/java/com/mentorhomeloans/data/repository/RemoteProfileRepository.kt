@@ -4,6 +4,7 @@ import com.mentorhomeloans.core.common.Result
 import com.mentorhomeloans.core.security.SessionManager
 import com.mentorhomeloans.data.local.dao.LoanDao
 import com.mentorhomeloans.data.remote.api.ProfileApiService
+import com.mentorhomeloans.data.remote.dto.CommonResponseDto
 import com.mentorhomeloans.data.remote.dto.CustomerAndCoApplicantDto
 import com.mentorhomeloans.domain.model.Address
 import com.mentorhomeloans.domain.model.CoApplicant
@@ -175,6 +176,19 @@ class RemoteProfileRepository @Inject constructor(
 
     override suspend fun updateEmail(customerId: String, newEmail: String): Result<Unit> {
         return Result.Success(Unit)
+    }
+
+    override suspend fun deleteAccount(loanAcNo: String): Result<Unit> {
+        return try {
+            val response = profileApiService.deleteCustomer(loanAcNo)
+            if (response.status) {
+                Result.Success(Unit)
+            } else {
+                Result.Error(Exception(response.message ?: "Delete account failed"))
+            }
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 
     private fun formatAddress(rawAddress: String?): String {

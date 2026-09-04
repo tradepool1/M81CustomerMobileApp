@@ -317,12 +317,7 @@ private fun RepaymentListItem(item: LoanRepaymentDetail, index: Int) {
                 fontWeight = FontWeight.SemiBold,
                 color = Color(0xFF212121)
             )
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = "Principal Paid: ${CurrencyUtils.formatINR(item.totalPrinciplePaid)}",
-                fontSize = 11.sp,
-                color = Color(0xFF757575)
-            )
+
         }
 
         Spacer(modifier = Modifier.width(8.dp))

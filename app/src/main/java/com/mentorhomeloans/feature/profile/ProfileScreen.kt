@@ -45,6 +45,21 @@ fun ProfileScreen(
     var showLogoutDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
+    // Handle Delete Account Effects
+    LaunchedEffect(Unit) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is ProfileEffect.DeleteSuccess -> {
+                    // After successful deletion, log out the user locally
+                    settingsViewModel.logout()
+                }
+                is ProfileEffect.Error -> {
+                    // In a real app, show a Snackbar or Toast
+                }
+            }
+        }
+    }
+
     // Navigate to Login on successful logout
     LaunchedEffect(settingsUiState) {
         if (settingsUiState is SettingsUIState.LogoutSuccess) {
@@ -121,7 +136,10 @@ fun ProfileScreen(
             },
             confirmButton = {
                 Button(
-                    onClick = { showDeleteDialog = false /* TODO: wire delete */ },
+                    onClick = {
+                        showDeleteDialog = false
+                        viewModel.deleteAccount()
+                    },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE53935)),
                     shape = RoundedCornerShape(8.dp)
                 ) {

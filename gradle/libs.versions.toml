@@ -38,6 +38,7 @@ workManager                = "2.10.1"
 
 # ── Security ──────────────────────────────────────────────────────────────────
 securityCrypto             = "1.1.0"
+androidxStartup            = "1.2.0"
 
 # ── Concurrent ────────────────────────────────────────────────────────────────
 concurrentFutures          = "1.2.0"
@@ -142,6 +143,7 @@ kotlinx-serialization-json           = { group = "org.jetbrains.kotlinx", name =
 junit                                = { group = "junit",          name = "junit",          version.ref = "junit" }
 androidx-junit                       = { group = "androidx.test.ext", name = "junit",       version.ref = "junitVersion" }
 androidx-espresso-core               = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-startup                     = { group = "androidx.startup",   name = "startup-runtime",        version.ref = "androidxStartup" }
 mockito-kotlin                       = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoKotlin" }
 androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
 

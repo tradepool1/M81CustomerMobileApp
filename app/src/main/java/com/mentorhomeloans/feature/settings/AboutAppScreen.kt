@@ -1,6 +1,7 @@
 package com.mentorhomeloans.feature.settings
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -12,6 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.mentorhomeloans.core.navigation.Screen
 import com.mentorhomeloans.core.ui.components.AppTopBar
 import com.mentorhomeloans.ui.theme.MentorBlue
 
@@ -42,11 +44,40 @@ fun AboutAppScreen(navController: NavController) {
                 colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Terms of Service", fontSize = 16.sp)
+                    Text(
+                        "Terms of Service",
+                        fontSize = 16.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                navController.navigate(Screen.CmsContent.createRoute("termsconditions"))
+                            }
+                            .padding(vertical = 8.dp)
+                    )
                     Spacer(Modifier.height(16.dp))
-                    Text("Privacy Policy", fontSize = 16.sp)
+                    Text(
+                        "Privacy Policy",
+                        fontSize = 16.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                navController.navigate(Screen.CmsContent.createRoute("privacypolicy"))
+                            }
+                            .padding(vertical = 8.dp)
+                    )
                     Spacer(Modifier.height(16.dp))
-                    Text("Open Source Licenses", fontSize = 16.sp)
+                    Text(
+                        "About Us",
+                        fontSize = 16.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                navController.navigate(Screen.CmsContent.createRoute("aboutus"))
+                            }
+                            .padding(vertical = 8.dp)
+                    )
+                    Spacer(Modifier.height(16.dp))
+                    Text("Open Source Licenses", fontSize = 16.sp, modifier = Modifier.padding(vertical = 8.dp))
                 }
             }
         }

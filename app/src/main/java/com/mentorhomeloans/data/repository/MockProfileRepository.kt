@@ -59,4 +59,9 @@ class MockProfileRepository @Inject constructor() : ProfileRepository {
         mockProfile = mockProfile.copy(email = newEmail)
         return Result.Success(Unit)
     }
+
+    override suspend fun deleteAccount(loanAcNo: String): Result<Unit> {
+        delay(1000)
+        return Result.Success(Unit)
+    }
 }

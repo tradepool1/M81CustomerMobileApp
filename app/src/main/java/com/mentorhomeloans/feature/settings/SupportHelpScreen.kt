@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -119,6 +120,23 @@ fun SupportHelpScreen(navController: NavController) {
                         iconColor = Color(0xFFE53935),
                         title = "Registered Corporate Office",
                         subtitle = "Mentor Home Loans India Ltd, Jaipur, Rajasthan"
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    HorizontalDivider(color = Color(0xFFF1F5F9))
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = "More Contact Details",
+                        fontSize = 14.sp,
+                        color = MentorBlue,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                navController.navigate(Screen.CmsContent.createRoute("contactus"))
+                            }
+                            .padding(vertical = 4.dp),
+                        textAlign = TextAlign.Center
                     )
                 }
             }

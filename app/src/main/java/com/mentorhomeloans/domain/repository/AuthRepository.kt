@@ -1,6 +1,7 @@
 package com.mentorhomeloans.domain.repository
 
 import com.mentorhomeloans.core.common.Result
+import com.mentorhomeloans.data.remote.dto.PageContentDto
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -48,4 +49,12 @@ interface AuthRepository {
      * @return A [Flow] that emits authentication state changes.
      */
     fun isSessionActive(): Flow<Boolean>
+
+    /**
+     * Fetches static page content from the backend by slug/key.
+     *
+     * @param pageKey The unique identifier for the page (e.g., 'aboutus', 'contactus').
+     * @return [Result.Success] containing the page data, or [Result.Error].
+     */
+    suspend fun getPageContent(pageKey: String): Result<PageContentDto>
 }

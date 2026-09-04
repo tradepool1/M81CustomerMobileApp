@@ -20,6 +20,8 @@ object Constants {
     const val SECURE_KEY_REFRESH     = "refresh_token"
     const val SECURE_KEY_CUSTOMER_ID = "customer_id"
     const val SECURE_KEY_MOBILE      = "mobile_number"
+    const val SECURE_KEY_JWT_EXPIRY     = "jwt_expiry"
+    const val SECURE_KEY_REFRESH_EXPIRY = "refresh_expiry"
 
     // ── DataStore Preference Keys ─────────────────────────────────────────────
     const val PREF_KEY_THEME         = "is_dark_mode"

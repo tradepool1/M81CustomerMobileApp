@@ -3,6 +3,7 @@ package com.mentorhomeloans.di
 import com.mentorhomeloans.core.network.ApiClient
 import com.mentorhomeloans.core.network.ApiLoggingInterceptor
 import com.mentorhomeloans.core.network.AuthInterceptor
+import com.mentorhomeloans.core.network.TokenAuthenticator
 import com.mentorhomeloans.data.remote.api.AuthApiService
 import com.mentorhomeloans.data.remote.api.DocumentApiService
 import com.mentorhomeloans.data.remote.api.LoanApiService
@@ -11,12 +12,14 @@ import com.mentorhomeloans.data.remote.api.ProfileApiService
 import com.mentorhomeloans.data.remote.api.RepaymentApiService
 import com.mentorhomeloans.data.remote.api.StatementApiService
 import com.mentorhomeloans.data.remote.api.SupportApiService
+import com.mentorhomeloans.data.remote.api.RegistrationApiService
 import com.mentorhomeloans.data.remote.api.TransactionApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
+import javax.inject.Named
 import javax.inject.Singleton
 
 /**
@@ -28,11 +31,22 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(
+    @Named("RefreshService")
+    fun provideRefreshAuthService(
         authInterceptor: AuthInterceptor,
         apiLoggingInterceptor: ApiLoggingInterceptor
+    ): AuthApiService {
+        return ApiClient.createRefreshService(authInterceptor, apiLoggingInterceptor)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRetrofit(
+        authInterceptor: AuthInterceptor,
+        tokenAuthenticator: TokenAuthenticator,
+        apiLoggingInterceptor: ApiLoggingInterceptor
     ): Retrofit {
-        return ApiClient.createRetrofit(authInterceptor, apiLoggingInterceptor)
+        return ApiClient.createRetrofit(authInterceptor, tokenAuthenticator, apiLoggingInterceptor)
     }
 
     @Provides
@@ -79,4 +93,9 @@ object NetworkModule {
     @Singleton
     fun provideNotificationApiService(retrofit: Retrofit): NotificationApiService =
         retrofit.create(NotificationApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideRegistrationApiService(retrofit: Retrofit): RegistrationApiService =
+        retrofit.create(RegistrationApiService::class.java)
 }

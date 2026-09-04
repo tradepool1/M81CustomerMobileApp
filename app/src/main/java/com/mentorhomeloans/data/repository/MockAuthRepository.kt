@@ -3,6 +3,7 @@ package com.mentorhomeloans.data.repository
 import com.mentorhomeloans.core.common.Result
 import com.mentorhomeloans.core.datastore.UserPreferencesDataStore
 import com.mentorhomeloans.core.security.SessionManager
+import com.mentorhomeloans.data.remote.dto.PageContentDto
 import com.mentorhomeloans.domain.repository.AuthRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -51,5 +52,16 @@ class MockAuthRepository @Inject constructor(
 
     override fun isSessionActive(): Flow<Boolean> {
         return sessionManager.isSessionActive
+    }
+
+    override suspend fun getPageContent(pageKey: String): Result<PageContentDto> {
+        delay(500)
+        return Result.Success(
+            PageContentDto(
+                pageKey = pageKey,
+                title = pageKey.replaceFirstChar { it.uppercase() },
+                contents = "<h3>$pageKey</h3><p>This is mock content for $pageKey. It supports <b>HTML</b> tags.</p>"
+            )
+        )
     }
 }

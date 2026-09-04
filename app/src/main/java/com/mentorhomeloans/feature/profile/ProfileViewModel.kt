@@ -4,13 +4,21 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mentorhomeloans.core.common.Result
+import com.mentorhomeloans.domain.repository.ProfileRepository
 import com.mentorhomeloans.domain.usecase.profile.GetProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+sealed interface ProfileEffect {
+    object DeleteSuccess : ProfileEffect
+    data class Error(val message: String) : ProfileEffect
+}
 
 /**
  * ProfileViewModel fetching profile values.
@@ -20,7 +28,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val getProfileUseCase: GetProfileUseCase
+    private val getProfileUseCase: GetProfileUseCase,
+    private val profileRepository: ProfileRepository
 ) : ViewModel() {
 
     /** Numeric loanId passed by the dashboard via navigation argument. Falls back to "24559". */
@@ -28,6 +37,12 @@ class ProfileViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<ProfileUIState>(ProfileUIState.Loading)
     val uiState: StateFlow<ProfileUIState> = _uiState.asStateFlow()
+
+    private val _effect = Channel<ProfileEffect>()
+    val effect = _effect.receiveAsFlow()
+
+    private val _isDeleting = MutableStateFlow(false)
+    val isDeleting: StateFlow<Boolean> = _isDeleting.asStateFlow()
 
     init {
         loadProfile()
@@ -43,6 +58,22 @@ class ProfileViewModel @Inject constructor(
                     is Result.Loading -> _uiState.value = ProfileUIState.Loading
                 }
             }
+        }
+    }
+
+    fun deleteAccount() {
+        viewModelScope.launch {
+            _isDeleting.value = true
+            when (val result = profileRepository.deleteAccount(loanId)) {
+                is Result.Success -> {
+                    _effect.send(ProfileEffect.DeleteSuccess)
+                }
+                is Result.Error -> {
+                    _effect.send(ProfileEffect.Error(result.exception.message ?: "Delete account failed"))
+                }
+                else -> {}
+            }
+            _isDeleting.value = false
         }
     }
 }
