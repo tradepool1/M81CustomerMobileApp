@@ -336,7 +336,7 @@ fun ProfileScreen(
                                 }
 
                                 // KYC Status Row
-                                Row(
+                                /*Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(vertical = 12.dp),
@@ -369,7 +369,7 @@ fun ProfileScreen(
                                             Text(user.kycStatus.name, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = badgeTint)
                                         }
                                     }
-                                }
+                                }*/
                             }
                         }
 

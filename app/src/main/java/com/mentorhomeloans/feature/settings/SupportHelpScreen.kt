@@ -33,13 +33,14 @@ fun SupportHelpScreen(navController: NavController) {
                 navigationIcon = Icons.Default.ArrowBack,
                 onNavigationClick = { navController.popBackStack() }
             )
-        }
+        },
+        containerColor = Color.White
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(Color(0xFFF4F6F9))
+                .background(Color.White)
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
         ) {

@@ -113,8 +113,8 @@ enum class LoanType(val displayName: String) {
  */
 enum class LoanStatus(val displayName: String) {
     ACTIVE("Active"),
-    CLOSED("Closed"),
-    COMPLETED("Completed"),
+    CLOSED("Regular"),
+    COMPLETED("Regular"),
     NPA("NPA"),
     FORECLOSED("Foreclosed"),
     WRITTEN_OFF("Written Off"),

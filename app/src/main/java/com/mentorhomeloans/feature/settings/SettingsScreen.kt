@@ -44,7 +44,7 @@ fun SettingsScreen(
         topBar = {
             TopAppBar(
                 title = {},
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFFF8F9FE))
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
             )
         },
         bottomBar = {
@@ -61,12 +61,13 @@ fun SettingsScreen(
                 }
             )
         },
-        containerColor = Color(0xFFF8F9FE)
+        containerColor = Color.White
     ) { paddingValues ->
         Column(
             modifier = modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .background(Color.White)
                 .padding(horizontal = 16.dp)
                 .verticalScroll(rememberScrollState())
         ) {

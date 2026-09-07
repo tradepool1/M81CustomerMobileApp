@@ -10,6 +10,7 @@ import com.mentorhomeloans.domain.model.LoanAccount
 import com.mentorhomeloans.domain.repository.LoanRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -53,7 +54,16 @@ class RemoteLoanRepository @Inject constructor(
     override fun getLoanById(loanId: String): Flow<Result<LoanAccount>> = flow {
         emit(Result.Loading)
         try {
-            val dtoList = loanApiService.getLoanDetailsByLoanId(loanId)
+            var effectiveLoanId = loanId
+            // Resolve numeric loanId from accountNumber if needed
+            if (loanId.toLongOrNull() == null) {
+                val cached = loanDao.getLoanAccountByAccountNumber(loanId).firstOrNull()
+                if (cached != null && cached.id.toLongOrNull() != null) {
+                    effectiveLoanId = cached.id
+                }
+            }
+
+            val dtoList = loanApiService.getLoanDetailsByLoanId(effectiveLoanId)
             if (dtoList.isNotEmpty()) {
                 val domainModel = LoanMapper.fromLoanDetailByIdDtoToDomain(dtoList.first())
                 loanDao.insertLoanAccount(LoanMapper.toEntity(domainModel))

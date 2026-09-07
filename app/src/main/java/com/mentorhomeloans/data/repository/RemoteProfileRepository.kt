@@ -33,11 +33,12 @@ class RemoteProfileRepository @Inject constructor(
         try {
             // Determine effective numeric loanId (pass loanId, not loan account no)
             var targetLoanId = if (customerId.toLongOrNull() != null) customerId else "24559"
-            val localLoans = loanDao.getAllLoanAccounts().firstOrNull()
-            if (!localLoans.isNullOrEmpty() && customerId.toLongOrNull() == null) {
-                val found = localLoans.firstOrNull { it.id.toLongOrNull() != null }
-                if (found != null) {
-                    targetLoanId = found.id
+            
+            // If customerId is an account number, resolve to numeric loanId from cache
+            if (customerId.toLongOrNull() == null) {
+                val cached = loanDao.getLoanAccountByAccountNumber(customerId).firstOrNull()
+                if (cached != null && cached.id.toLongOrNull() != null) {
+                    targetLoanId = cached.id
                 }
             }
 

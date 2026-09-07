@@ -26,13 +26,14 @@ fun AboutAppScreen(navController: NavController) {
                 navigationIcon = Icons.Default.ArrowBack,
                 onNavigationClick = { navController.popBackStack() }
             )
-        }
+        },
+        containerColor = Color.White
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(Color(0xFFF8F9FE))
+                .background(Color.White)
                 .padding(16.dp)
         ) {
             Text("Mentor Home Loans", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = MentorBlue)
@@ -41,12 +42,14 @@ fun AboutAppScreen(navController: NavController) {
             Spacer(Modifier.height(24.dp))
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
                         "Terms of Service",
                         fontSize = 16.sp,
+                        color = Color.Black,
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
@@ -58,6 +61,7 @@ fun AboutAppScreen(navController: NavController) {
                     Text(
                         "Privacy Policy",
                         fontSize = 16.sp,
+                        color = Color.Black,
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
@@ -69,6 +73,7 @@ fun AboutAppScreen(navController: NavController) {
                     Text(
                         "About Us",
                         fontSize = 16.sp,
+                        color = Color.Black,
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
@@ -77,7 +82,12 @@ fun AboutAppScreen(navController: NavController) {
                             .padding(vertical = 8.dp)
                     )
                     Spacer(Modifier.height(16.dp))
-                    Text("Open Source Licenses", fontSize = 16.sp, modifier = Modifier.padding(vertical = 8.dp))
+                    Text(
+                        "Open Source Licenses", 
+                        fontSize = 16.sp, 
+                        color = Color.Black,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
                 }
             }
         }

@@ -25,7 +25,8 @@ data class GetLoanDetailsResponseItemDto(
     @SerializedName("ReceivedAmt") val receivedAmt: Double?,
     @SerializedName("LoanAmount") val loanAmount: Double?,
     @SerializedName("EMI_DueDate") val emiDueDate: String?,
-    @SerializedName("LoanEMIAmount") val loanEMIAmount: Double?
+    @SerializedName("LoanEMIAmount") val loanEMIAmount: Double?,
+    @SerializedName("MaturityDate") val maturityDate: String?
 )
 
 /**
@@ -43,7 +44,8 @@ data class GetLoanDetailByLoanIdResponseDto(
     @SerializedName("ReceivedTenure") val receivedTenure: Int?,
     @SerializedName("RemainingTenure") val remainingTenure: Int?,
     @SerializedName("LoanEMIAmount") val loanEMIAmount: Double?,
-    @SerializedName("LoanStatus") val loanStatus: String?
+    @SerializedName("LoanStatus") val loanStatus: String?,
+    @SerializedName("MaturityDate") val maturityDate: String?
 )
 
 /**

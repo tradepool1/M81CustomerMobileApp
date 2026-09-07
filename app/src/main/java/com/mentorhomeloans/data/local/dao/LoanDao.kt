@@ -16,6 +16,9 @@ interface LoanDao {
     @Query("SELECT * FROM loan_accounts WHERE id = :id LIMIT 1")
     fun getLoanAccount(id: String): Flow<LoanAccountEntity?>
 
+    @Query("SELECT * FROM loan_accounts WHERE accountNumber = :accountNumber LIMIT 1")
+    fun getLoanAccountByAccountNumber(accountNumber: String): Flow<LoanAccountEntity?>
+
     @Query("SELECT * FROM loan_accounts")
     fun getAllLoanAccounts(): Flow<List<LoanAccountEntity>>
 

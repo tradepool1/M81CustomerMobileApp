@@ -1,12 +1,14 @@
 package com.mentorhomeloans.data.repository
 
 import com.mentorhomeloans.core.common.Result
+import com.mentorhomeloans.data.local.dao.LoanDao
 import com.mentorhomeloans.data.remote.api.RepaymentApiService
 import com.mentorhomeloans.domain.model.LoanRepaymentDetail
 import com.mentorhomeloans.domain.model.RepaymentSummary
 import com.mentorhomeloans.domain.repository.RepaymentRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,7 +20,8 @@ import javax.inject.Singleton
  */
 @Singleton
 class RemoteRepaymentRepository @Inject constructor(
-    private val repaymentApiService: RepaymentApiService
+    private val repaymentApiService: RepaymentApiService,
+    private val loanDao: LoanDao
 ) : RepaymentRepository {
 
     /**
@@ -43,7 +46,16 @@ class RemoteRepaymentRepository @Inject constructor(
     override fun getLoanRepaymentDetails(loanId: String): Flow<Result<List<LoanRepaymentDetail>>> = flow {
         emit(Result.Loading)
         try {
-            val dtoList = repaymentApiService.getLoanRepaymentDetails(loanId)
+            var effectiveLoanId = loanId
+            // Resolve numeric loanId from accountNumber if needed
+            if (loanId.toLongOrNull() == null) {
+                val cached = loanDao.getLoanAccountByAccountNumber(loanId).firstOrNull()
+                if (cached != null && cached.id.toLongOrNull() != null) {
+                    effectiveLoanId = cached.id
+                }
+            }
+
+            val dtoList = repaymentApiService.getLoanRepaymentDetails(effectiveLoanId)
             val domainList = dtoList.map { dto ->
                 LoanRepaymentDetail(
                     period = dto.period,

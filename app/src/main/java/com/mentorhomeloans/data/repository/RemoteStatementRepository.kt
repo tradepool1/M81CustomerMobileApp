@@ -1,6 +1,7 @@
 package com.mentorhomeloans.data.repository
 
 import com.mentorhomeloans.core.common.Result
+import com.mentorhomeloans.data.local.dao.LoanDao
 import com.mentorhomeloans.data.remote.api.StatementApiService
 import com.mentorhomeloans.domain.model.LoanSOADetail
 import com.mentorhomeloans.domain.model.Statement
@@ -8,6 +9,7 @@ import com.mentorhomeloans.domain.model.StatementType
 import com.mentorhomeloans.domain.repository.StatementRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,7 +19,8 @@ import javax.inject.Singleton
  */
 @Singleton
 class RemoteStatementRepository @Inject constructor(
-    private val statementApiService: StatementApiService
+    private val statementApiService: StatementApiService,
+    private val loanDao: LoanDao
 ) : StatementRepository {
 
     /**
@@ -27,7 +30,16 @@ class RemoteStatementRepository @Inject constructor(
     override fun getCusLoanSOADetails(loanId: String): Flow<Result<List<LoanSOADetail>>> = flow {
         emit(Result.Loading)
         try {
-            val dtoList = statementApiService.getCusLoanSOADetails(loanId)
+            var effectiveLoanId = loanId
+            // Resolve numeric loanId from accountNumber if needed
+            if (loanId.toLongOrNull() == null) {
+                val cached = loanDao.getLoanAccountByAccountNumber(loanId).firstOrNull()
+                if (cached != null && cached.id.toLongOrNull() != null) {
+                    effectiveLoanId = cached.id
+                }
+            }
+
+            val dtoList = statementApiService.getCusLoanSOADetails(effectiveLoanId)
             val domainList = dtoList.map { dto ->
                 val cleanParticular = (dto.perticular ?: "Transaction Detail")
                     .replace("\\N", "-")
