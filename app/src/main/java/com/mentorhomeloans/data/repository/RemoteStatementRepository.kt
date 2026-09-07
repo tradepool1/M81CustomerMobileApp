@@ -6,6 +6,7 @@ import com.mentorhomeloans.domain.model.LoanSOADetail
 import com.mentorhomeloans.domain.model.Statement
 import com.mentorhomeloans.domain.model.StatementType
 import com.mentorhomeloans.domain.repository.StatementRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -43,6 +44,7 @@ class RemoteStatementRepository @Inject constructor(
             }
             emit(Result.Success(domainList))
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             emit(Result.Error(e))
         }
     }
@@ -85,6 +87,7 @@ class RemoteStatementRepository @Inject constructor(
             )
             emit(Result.Success(mockList))
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             emit(Result.Error(e))
         }
     }

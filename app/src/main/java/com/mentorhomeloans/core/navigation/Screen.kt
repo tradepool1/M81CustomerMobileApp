@@ -16,8 +16,8 @@ sealed class Screen(val route: String) {
     object Repayment : Screen("repayment/{loanId}") {
         fun createRoute(loanId: String) = "repayment/$loanId"
     }
-    object Profile : Screen("profile/{loanId}") {
-        fun createRoute(loanId: String) = "profile/$loanId"
+    object Profile : Screen("profile/{loanId}/{loanAcNo}") {
+        fun createRoute(loanId: String, loanAcNo: String) = "profile/$loanId/$loanAcNo"
     }
     object Support : Screen("support")
     object Notifications : Screen("notifications")

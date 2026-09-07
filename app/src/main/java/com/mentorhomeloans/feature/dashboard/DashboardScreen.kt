@@ -72,8 +72,10 @@ fun DashboardScreen(
                     IconButton(onClick = { navController.navigate(Screen.Notifications.route) }) {
                         Icon(imageVector = Icons.Default.Notifications, contentDescription = "Alerts", tint = Color.Gray)
                     }
-                    val selectedLoanId = (uiState as? DashboardUIState.Success)?.selectedLoan?.id ?: "24559"
-                    IconButton(onClick = { navController.navigate(Screen.Profile.createRoute(selectedLoanId)) }) {
+                    val selectedLoan = (uiState as? DashboardUIState.Success)?.selectedLoan
+                    val selectedLoanId = selectedLoan?.id ?: "24559"
+                    val selectedLoanAcNo = selectedLoan?.accountNumber ?: ""
+                    IconButton(onClick = { navController.navigate(Screen.Profile.createRoute(selectedLoanId, selectedLoanAcNo)) }) {
                         Icon(imageVector = Icons.Default.AccountCircle, contentDescription = "Profile", tint = Color.Gray)
                     }
                 },

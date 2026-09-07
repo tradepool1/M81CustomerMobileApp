@@ -8,6 +8,7 @@ import com.mentorhomeloans.data.remote.api.LoanApiService
 import com.mentorhomeloans.data.remote.dto.GetLoanDetailsRequestDto
 import com.mentorhomeloans.domain.model.LoanAccount
 import com.mentorhomeloans.domain.repository.LoanRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -37,6 +38,7 @@ class RemoteLoanRepository @Inject constructor(
                 emit(Result.Error(Exception("No loan accounts found")))
             }
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             // Fallback to local cache if offline/error
             loanDao.getAllLoanAccounts().collect { entities ->
                 if (entities.isNotEmpty()) {
@@ -66,6 +68,7 @@ class RemoteLoanRepository @Inject constructor(
                 }
             }
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             loanDao.getLoanAccount(loanId).collect { entity ->
                 if (entity != null) {
                     emit(Result.Success(LoanMapper.toDomain(entity)))
@@ -90,6 +93,7 @@ class RemoteLoanRepository @Inject constructor(
                 emit(Result.Error(Exception("No loan accounts found")))
             }
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             // Fallback to local cache if offline/error
             loanDao.getAllLoanAccounts().collect { entities ->
                 if (entities.isNotEmpty()) {

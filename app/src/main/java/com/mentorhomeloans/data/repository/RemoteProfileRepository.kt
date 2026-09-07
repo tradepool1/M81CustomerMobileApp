@@ -11,6 +11,7 @@ import com.mentorhomeloans.domain.model.CoApplicant
 import com.mentorhomeloans.domain.model.KycStatus
 import com.mentorhomeloans.domain.model.User
 import com.mentorhomeloans.domain.repository.ProfileRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
@@ -103,6 +104,7 @@ class RemoteProfileRepository @Inject constructor(
                 emit(Result.Error(Exception("No customer details returned")))
             }
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             // Fallback profile matching response structure
             val fallbackProfile = User(
                 id = "cust_27695",

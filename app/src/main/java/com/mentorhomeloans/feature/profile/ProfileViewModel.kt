@@ -34,6 +34,7 @@ class ProfileViewModel @Inject constructor(
 
     /** Numeric loanId passed by the dashboard via navigation argument. Falls back to "24559". */
     private val loanId: String = savedStateHandle.get<String>("loanId") ?: "24559"
+    private val loanAcNo: String = savedStateHandle.get<String>("loanAcNo") ?: ""
 
     private val _uiState = MutableStateFlow<ProfileUIState>(ProfileUIState.Loading)
     val uiState: StateFlow<ProfileUIState> = _uiState.asStateFlow()
@@ -64,7 +65,9 @@ class ProfileViewModel @Inject constructor(
     fun deleteAccount() {
         viewModelScope.launch {
             _isDeleting.value = true
-            when (val result = profileRepository.deleteAccount(loanId)) {
+
+            // Directly call delete API with the human-readable loan account number
+            when (val result = profileRepository.deleteAccount(loanAcNo)) {
                 is Result.Success -> {
                     _effect.send(ProfileEffect.DeleteSuccess)
                 }
@@ -73,6 +76,7 @@ class ProfileViewModel @Inject constructor(
                 }
                 else -> {}
             }
+
             _isDeleting.value = false
         }
     }

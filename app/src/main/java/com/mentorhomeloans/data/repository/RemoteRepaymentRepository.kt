@@ -5,6 +5,7 @@ import com.mentorhomeloans.data.remote.api.RepaymentApiService
 import com.mentorhomeloans.domain.model.LoanRepaymentDetail
 import com.mentorhomeloans.domain.model.RepaymentSummary
 import com.mentorhomeloans.domain.repository.RepaymentRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -54,6 +55,7 @@ class RemoteRepaymentRepository @Inject constructor(
             }
             emit(Result.Success(domainList))
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             emit(Result.Error(e))
         }
     }
