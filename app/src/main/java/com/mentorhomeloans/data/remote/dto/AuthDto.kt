@@ -3,39 +3,15 @@ package com.mentorhomeloans.data.remote.dto
 import com.google.gson.annotations.SerializedName
 
 /**
- * Request body for GenerateOTP endpoint.
+ * Request body for RefreshAccessToken endpoint.
  */
-data class GenerateOtpRequestDto(
-    @SerializedName("phoneNo") val phoneNo: String
+data class RefreshTokenRequestDto(
+    @SerializedName("refreshToken") val refreshToken: String,
+    @SerializedName("deviceId") val deviceId: String
 )
 
 /**
- * Response from GenerateOTP endpoint.
- * { "Status": true, "Message": "OTP sent successfully." }
- */
-data class GenerateOtpResponseDto(
-    @SerializedName("Status")  val status: Boolean,
-    @SerializedName("Message") val message: String
-)
-
-/**
- * Request body for OTP_Verification endpoint.
- */
-data class OtpVerificationRequestDto(
-    @SerializedName("phoneNo")  val phoneNo: String,
-    @SerializedName("otpCode")  val otpCode: String
-)
-
-/**
- * Response from OTP_Verification endpoint.
- * {
- *   "Status": true,
- *   "Message": "...",
- *   "AccessToken": "...",
- *   "RefreshToken": "...",
- *   "AccessTokenExpiresAt": "...",
- *   "RefreshTokenExpiresAt": "..."
- * }
+ * Response from OTP_Verification / Login endpoint.
  */
 data class OtpVerificationResponseDto(
     @SerializedName("Status")  val status: Boolean,
@@ -55,9 +31,19 @@ data class CommonResponseDto(
 )
 
 /**
- * Request body for RefreshAccessToken endpoint.
+ * Request body for Login endpoint.
  */
-data class RefreshTokenRequestDto(
-    @SerializedName("refreshToken") val refreshToken: String,
-    @SerializedName("deviceId") val deviceId: String
+data class LoginRequestDto(
+    @SerializedName("customerId") val customerId: String,
+    @SerializedName("password") val password: String,
+    @SerializedName("captchaToken") val captchaToken: String
+)
+
+/**
+ * Request body for UpdatePassword endpoint.
+ */
+data class UpdatePasswordRequestDto(
+    @SerializedName("customerId") val customerId: String,
+    @SerializedName("password") val password: String,
+    @SerializedName("captchaToken") val captchaToken: String
 )

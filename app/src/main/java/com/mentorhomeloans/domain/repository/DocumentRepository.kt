@@ -24,4 +24,12 @@ interface DocumentRepository {
      * @return [Result.Success] with the local file path on success.
      */
     suspend fun downloadDocument(document: Document): Result<String>
+
+    /**
+     * Triggers document download on server and returns server message.
+     *
+     * @param loanAcNo The loan account number.
+     * @return [Result.Success] with the server message.
+     */
+    suspend fun getLoanDocuments(loanAcNo: String): Result<String>
 }

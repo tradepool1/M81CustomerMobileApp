@@ -43,6 +43,9 @@ androidxStartup            = "1.2.0"
 # ── Concurrent ────────────────────────────────────────────────────────────────
 concurrentFutures          = "1.2.0"
 
+# ── reCAPTCHA ─────────────────────────────────────────────────────────────────
+recaptcha                  = "18.5.1"
+
 # ── Image Loading ─────────────────────────────────────────────────────────────
 coil                       = "3.2.0"
 
@@ -125,6 +128,9 @@ security-crypto                      = { group = "androidx.security", name = "se
 # ── Concurrent ────────────────────────────────────────────────────────────────
 androidx-concurrent-futures          = { group = "androidx.concurrent", name = "concurrent-futures", version.ref = "concurrentFutures" }
 androidx-concurrent-futures-ktx      = { group = "androidx.concurrent", name = "concurrent-futures-ktx", version.ref = "concurrentFutures" }
+
+# ── reCAPTCHA ─────────────────────────────────────────────────────────────────
+recaptcha                            = { group = "com.google.android.recaptcha", name = "recaptcha", version.ref = "recaptcha" }
 
 # ── Image Loading (Coil 3) ───────────────────────────────────────────────────
 coil-compose                         = { group = "io.coil-kt.coil3", name = "coil-compose",        version.ref = "coil" }

@@ -14,26 +14,14 @@ import kotlinx.coroutines.flow.Flow
 interface AuthRepository {
 
     /**
-     * Sends an OTP to the given mobile number for verification.
+     * Authenticates a user using Customer ID, Password, and a CAPTCHA token.
      *
-     * @param mobileNumber The 10-digit mobile number to send OTP to.
-     * @return [Result.Success] with a session reference ID on success,
-     *         [Result.Error] on failure (invalid number, network error, etc.).
+     * @param customerId   The unique customer identifier.
+     * @param password     The user's account password.
+     * @param captchaToken The verification token obtained from reCAPTCHA.
+     * @return [Result.Success] with true on success, [Result.Error] on failure.
      */
-    suspend fun sendOtp(mobileNumber: String): Result<String>
-
-    /**
-     * Verifies the OTP entered by the user against the backend session.
-     *
-     * On success, the JWT and refresh tokens are stored in [SessionManager].
-     *
-     * @param mobileNumber  The mobile number used to request the OTP.
-     * @param otp           The 6-digit OTP entered by the user.
-     * @param sessionId     The session reference ID returned by [sendOtp].
-     * @return [Result.Success] with a Boolean (true = verified) on success,
-     *         [Result.Error] on invalid OTP or network error.
-     */
-    suspend fun verifyOtp(mobileNumber: String, otp: String, sessionId: String): Result<Boolean>
+    suspend fun login(customerId: String, password: String, captchaToken: String): Result<Boolean>
 
     /**
      * Logs out the current user by clearing all session tokens and cached data.
@@ -57,4 +45,14 @@ interface AuthRepository {
      * @return [Result.Success] containing the page data, or [Result.Error].
      */
     suspend fun getPageContent(pageKey: String): Result<PageContentDto>
+
+    /**
+     * Updates the user's password.
+     *
+     * @param customerId   The ID of the customer.
+     * @param password     The new password.
+     * @param captchaToken The token from captcha verification.
+     * @return [Result.Success] with the server message on success.
+     */
+    suspend fun updatePassword(customerId: String, password: String, captchaToken: String): Result<String>
 }

@@ -9,10 +9,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.mentorhomeloans.R
 import com.mentorhomeloans.core.navigation.Screen
 import com.mentorhomeloans.core.ui.components.AppTopBar
 import com.mentorhomeloans.ui.theme.MentorBlue
@@ -83,10 +85,15 @@ fun AboutAppScreen(navController: NavController) {
                     )
                     Spacer(Modifier.height(16.dp))
                     Text(
-                        "Open Source Licenses", 
-                        fontSize = 16.sp, 
+                        stringResource(R.string.setting_contact_us),
+                        fontSize = 16.sp,
                         color = Color.Black,
-                        modifier = Modifier.padding(vertical = 8.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                navController.navigate(Screen.CmsContent.createRoute("contactus"))
+                            }
+                            .padding(vertical = 8.dp)
                     )
                 }
             }

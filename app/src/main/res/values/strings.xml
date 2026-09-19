@@ -22,8 +22,12 @@
     <!-- Login Screen -->
     <string name="login_welcome_title">Welcome Back!</string>
     <string name="login_welcome_subtitle">Login to continue to your account</string>
+    <string name="recaptcha_site_key" translatable="false">6LfHOb4tAAAAAPkhOBhJA7nwvZCyF4sWzS7EnSse</string>
     <string name="hint_branch_code">Branch Code</string>
     <string name="hint_mobile_number">Mobile Number</string>
+    <string name="hint_customer_id">Customer ID</string>
+    <string name="hint_password">Password</string>
+    <string name="btn_login">Login</string>
     <string name="btn_send_otp">Send OTP</string>
     <string name="btn_verify_login">Verify &amp; Login</string>
     <string name="btn_request_registration">Request Registration</string>
@@ -31,6 +35,8 @@
     <string name="btn_resend_otp">Resend OTP</string>
     <string name="otp_sent_format">OTP sent to %1$s</string>
     <string name="hint_verification_code">Verification Code</string>
+    <string name="msg_captcha_required">Please complete the CAPTCHA to proceed.</string>
+    <string name="msg_captcha_error">CAPTCHA verification failed. Please try again.</string>
 
     <!-- Request Registration Screen -->
     <string name="request_reg_title">Request Registration</string>
@@ -62,6 +68,7 @@
     <string name="setting_about_app_sub">Version info, terms and privacy policy</string>
     <string name="setting_logout">Logout</string>
     <string name="setting_logout_sub">Sign out from your account</string>
+    <string name="setting_contact_us">Contact Us</string>
     <string name="logout_dialog_title">Logout</string>
     <string name="logout_dialog_desc">Are you sure you want to sign out from your account?</string>
     <string name="logout_confirm_yes">Yes, Logout</string>

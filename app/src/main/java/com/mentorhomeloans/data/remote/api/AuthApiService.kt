@@ -1,11 +1,11 @@
 package com.mentorhomeloans.data.remote.api
 
-import com.mentorhomeloans.data.remote.dto.GenerateOtpRequestDto
-import com.mentorhomeloans.data.remote.dto.GenerateOtpResponseDto
-import com.mentorhomeloans.data.remote.dto.OtpVerificationRequestDto
 import com.mentorhomeloans.data.remote.dto.OtpVerificationResponseDto
+import com.mentorhomeloans.data.remote.dto.LoginRequestDto
 import com.mentorhomeloans.data.remote.dto.PageContentDto
 import com.mentorhomeloans.data.remote.dto.RefreshTokenRequestDto
+import com.mentorhomeloans.data.remote.dto.UpdatePasswordRequestDto
+import com.mentorhomeloans.data.remote.dto.CommonResponseDto
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -20,26 +20,24 @@ import retrofit2.http.Query
 interface AuthApiService {
 
     /**
-     * Sends OTP to the given phone number.
-     * POST /api/MobileApp/GenerateOTP
-     * Body: { "phoneNo": "..." }
+     * Performs customer login with credentials and CAPTCHA token.
+     * POST /api/MobileApp/Login
      */
     @Headers("Content-Type: application/json-patch+json")
-    @POST("GenerateOTP")
-    suspend fun generateOtp(
-        @Body request: GenerateOtpRequestDto
-    ): GenerateOtpResponseDto
+    @POST("Login")
+    suspend fun login(
+        @Body request: LoginRequestDto
+    ): OtpVerificationResponseDto
 
     /**
-     * Verifies OTP code for the given phone number.
-     * POST /api/MobileApp/OTP_Verification
-     * Body: { "phoneNo": "...", "otpCode": "..." }
+     * Updates customer password.
+     * POST /api/MobileApp/UpdatePassword
      */
     @Headers("Content-Type: application/json-patch+json")
-    @POST("OTP_Verification")
-    suspend fun verifyOtp(
-        @Body request: OtpVerificationRequestDto
-    ): OtpVerificationResponseDto
+    @POST("UpdatePassword")
+    suspend fun updatePassword(
+        @Body request: UpdatePasswordRequestDto
+    ): CommonResponseDto
 
     /**
      * Retrieves static page content by page key.

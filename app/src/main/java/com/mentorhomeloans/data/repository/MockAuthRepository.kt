@@ -19,29 +19,24 @@ class MockAuthRepository @Inject constructor(
     private val preferencesDataStore: UserPreferencesDataStore
 ) : AuthRepository {
 
-    override suspend fun sendOtp(mobileNumber: String): Result<String> {
-        delay(1000)
-        return Result.Success("mock_session_id_xyz")
-    }
-
-    override suspend fun verifyOtp(
-        mobileNumber: String,
-        otp: String,
-        sessionId: String
+    override suspend fun login(
+        customerId: String,
+        password: String,
+        captchaToken: String
     ): Result<Boolean> {
-        delay(1000)
-        if (otp == "123456") {
+        delay(1500)
+        if (customerId.isNotBlank() && password == "Test@123" && captchaToken.isNotBlank()) {
             sessionManager.saveSession(
                 jwtToken = "mock_jwt_token_header",
                 refreshToken = "mock_refresh_token_payload",
-                customerId = "CUST00123",
-                mobileNumber = mobileNumber
+                customerId = customerId,
+                mobileNumber = "8946970398"
             )
             preferencesDataStore.setLoggedIn(true)
             preferencesDataStore.setOnboardingCompleted(true)
             return Result.Success(true)
         }
-        return Result.Error(IllegalArgumentException("Invalid OTP. Try 123456"))
+        return Result.Error(IllegalArgumentException("Invalid credentials or CAPTCHA token."))
     }
 
     override suspend fun logout(): Result<Unit> {
@@ -63,5 +58,14 @@ class MockAuthRepository @Inject constructor(
                 contents = "<h3>$pageKey</h3><p>This is mock content for $pageKey. It supports <b>HTML</b> tags.</p>"
             )
         )
+    }
+
+    override suspend fun updatePassword(
+        customerId: String,
+        password: String,
+        captchaToken: String
+    ): Result<String> {
+        delay(1000)
+        return Result.Success("Password updated successfully (Mock)")
     }
 }

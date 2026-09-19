@@ -66,4 +66,9 @@ class MockDocumentRepository @Inject constructor() : DocumentRepository {
         delay(1500)
         return Result.Success("/storage/emulated/0/Download/${document.title.replace(" ", "_")}.pdf")
     }
+
+    override suspend fun getLoanDocuments(loanAcNo: String): Result<String> {
+        delay(1000)
+        return Result.Success("Documents for account $loanAcNo are being processed. You will receive a notification once ready.")
+    }
 }

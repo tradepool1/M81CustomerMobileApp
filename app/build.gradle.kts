@@ -34,7 +34,6 @@ android {
     buildTypes {
         debug {
             isMinifyEnabled        = false
-            applicationIdSuffix    = ".debug"
             buildConfigField("Boolean", "ENABLE_LOGGING",  "true")
             buildConfigField("String",  "BASE_URL",        "\"https://192.168.200.11:4204/api/MobileApp/\"")
             buildConfigField("Boolean", "TRUST_ALL_CERTS", "true")
@@ -129,10 +128,12 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging)
     implementation(libs.gson)
+    implementation("com.google.android.gms:play-services-tasks:18.2.0")
 
     // ── Coroutines ───────────────────────────────────────────────────────────
     implementation(libs.coroutines.core)
     implementation(libs.coroutines.android)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.1")
 
     // ── DataStore ────────────────────────────────────────────────────────────
     implementation(libs.datastore.preferences)
@@ -143,6 +144,7 @@ dependencies {
 
     // ── Security ─────────────────────────────────────────────────────────────
     implementation(libs.security.crypto)
+    implementation(libs.recaptcha)
 
     // ── Concurrent (Fixing version conflict) ──────────────────────────────────
     implementation(libs.androidx.concurrent.futures)

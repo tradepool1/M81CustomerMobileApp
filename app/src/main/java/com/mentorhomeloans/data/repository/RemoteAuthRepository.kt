@@ -4,9 +4,9 @@ import com.mentorhomeloans.core.common.Result
 import com.mentorhomeloans.core.datastore.UserPreferencesDataStore
 import com.mentorhomeloans.core.security.SessionManager
 import com.mentorhomeloans.data.remote.api.AuthApiService
-import com.mentorhomeloans.data.remote.dto.GenerateOtpRequestDto
-import com.mentorhomeloans.data.remote.dto.OtpVerificationRequestDto
+import com.mentorhomeloans.data.remote.dto.LoginRequestDto
 import com.mentorhomeloans.data.remote.dto.PageContentDto
+import com.mentorhomeloans.data.remote.dto.UpdatePasswordRequestDto
 import com.mentorhomeloans.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -29,56 +29,30 @@ class RemoteAuthRepository @Inject constructor(
 ) : AuthRepository {
 
     /**
-     * Calls GenerateOTP endpoint to send OTP to [mobileNumber].
-     *
-     * Returns [Result.Success] with the phone number (used as session key,
-     * since this API has no separate sessionId) when Status == true.
-     * Returns [Result.Error] if the API reports failure or a network error occurs.
+     * Calls Login endpoint with credentials and CAPTCHA.
      */
-    override suspend fun sendOtp(mobileNumber: String): Result<String> {
-        return try {
-            val response = authApiService.generateOtp(
-                GenerateOtpRequestDto(phoneNo = mobileNumber)
-            )
-            if (response.status) {
-                Result.Success(mobileNumber)
-            } else {
-                Result.Error(Exception(response.message))
-            }
-        } catch (e: Exception) {
-            Result.Error(e)
-        }
-    }
-
-    /**
-     * Calls OTP_Verification endpoint to verify [otp] for [mobileNumber].
-     *
-     * On success, saves the returned tokens to [SessionManager] via [saveSession].
-     * The [sessionId] parameter is the phone number (returned from [sendOtp])
-     * and is used as the phoneNo in the verification request.
-     *
-     * Returns [Result.Success] with true on verified, [Result.Error] otherwise.
-     */
-    override suspend fun verifyOtp(
-        mobileNumber: String,
-        otp: String,
-        sessionId: String
+    override suspend fun login(
+        customerId: String,
+        password: String,
+        captchaToken: String
     ): Result<Boolean> {
         return try {
-            val response = authApiService.verifyOtp(
-                OtpVerificationRequestDto(
-                    phoneNo = mobileNumber,
-                    otpCode = otp
+            val response = authApiService.login(
+                LoginRequestDto(
+                    customerId = customerId,
+                    password = password,
+                    captchaToken = captchaToken
                 )
             )
             if (response.status) {
-                val accessToken = response.accessToken ?: "jwt_session_$mobileNumber"
+                val accessToken = response.accessToken ?: "jwt_session_$customerId"
                 val refreshToken = response.refreshToken ?: ""
 
                 sessionManager.saveSession(
                     jwtToken      = accessToken,
                     refreshToken  = refreshToken,
-                    mobileNumber  = mobileNumber,
+                    customerId    = customerId,
+                    mobileNumber  = "", // Mobile no. might be returned by API or not needed if login is by CUST ID
                     jwtExpiry     = response.accessTokenExpiresAt,
                     refreshExpiry = response.refreshTokenExpiresAt
                 )
@@ -121,6 +95,32 @@ class RemoteAuthRepository @Inject constructor(
                 Result.Success(page)
             } else {
                 Result.Error(Exception("No content found for $pageKey"))
+            }
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    /**
+     * Calls UpdatePassword endpoint.
+     */
+    override suspend fun updatePassword(
+        customerId: String,
+        password: String,
+        captchaToken: String
+    ): Result<String> {
+        return try {
+            val response = authApiService.updatePassword(
+                UpdatePasswordRequestDto(
+                    customerId = customerId,
+                    password = password,
+                    captchaToken = captchaToken
+                )
+            )
+            if (response.status) {
+                Result.Success(response.message ?: "Password updated successfully")
+            } else {
+                Result.Error(Exception(response.message ?: "Failed to update password"))
             }
         } catch (e: Exception) {
             Result.Error(e)
