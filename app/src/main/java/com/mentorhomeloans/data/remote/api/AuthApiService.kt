@@ -24,7 +24,7 @@ interface AuthApiService {
      * POST /api/MobileApp/Login
      */
     @Headers("Content-Type: application/json-patch+json")
-    @POST("Login")
+    @POST("ValidateCustomerCredentials")
     suspend fun login(
         @Body request: LoginRequestDto
     ): OtpVerificationResponseDto

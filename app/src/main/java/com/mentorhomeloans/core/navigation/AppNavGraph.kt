@@ -24,6 +24,8 @@ import com.mentorhomeloans.feature.repayment.RepaymentScreen
 import com.mentorhomeloans.feature.repayment.RepaymentViewModel
 import com.mentorhomeloans.feature.settings.SettingsScreen
 import com.mentorhomeloans.feature.settings.SettingsViewModel
+import com.mentorhomeloans.feature.settings.ChangePasswordViewModel
+import com.mentorhomeloans.feature.settings.ChangePasswordScreen
 import com.mentorhomeloans.feature.splash.SplashScreen
 import com.mentorhomeloans.feature.statements.StatementsScreen
 import com.mentorhomeloans.feature.statements.StatementsViewModel
@@ -147,6 +149,12 @@ fun AppNavGraph(
         // ── Security Settings ──────────────────────────────────────────────
         composable(Screen.SecuritySettings.route) {
             com.mentorhomeloans.feature.settings.SecuritySettingsScreen(navController = navController)
+        }
+
+        // ── Change Password ────────────────────────────────────────────────
+        composable(Screen.ChangePassword.route) {
+            val vm: ChangePasswordViewModel = hiltViewModel()
+            ChangePasswordScreen(navController = navController, viewModel = vm)
         }
 
         // ── About App ──────────────────────────────────────────────────────

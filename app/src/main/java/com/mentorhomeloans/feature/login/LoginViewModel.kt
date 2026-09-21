@@ -36,6 +36,7 @@ class LoginViewModel @Inject constructor(
      */
     fun startLoginFlow() {
         viewModelScope.launch {
+            // Immediately show loading to indicate background work started
             _uiState.value = LoginUIState.CaptchaLoading
             _captchaTrigger.emit(Unit)
         }

@@ -66,6 +66,8 @@
     <string name="setting_delete_account_sub">Permanently remove your account</string>
     <string name="setting_about_app">About App</string>
     <string name="setting_about_app_sub">Version info, terms and privacy policy</string>
+    <string name="setting_change_password">Change Password</string>
+    <string name="setting_change_password_sub">Update your account password</string>
     <string name="setting_logout">Logout</string>
     <string name="setting_logout_sub">Sign out from your account</string>
     <string name="setting_contact_us">Contact Us</string>

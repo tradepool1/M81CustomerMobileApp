@@ -69,7 +69,7 @@ fun LoginScreen(
             val result = Recaptcha.getClient(context.applicationContext as Application, siteKey, 10000L)
             recaptchaClient = result.getOrNull()
         } catch (e: Exception) {
-            // Silently handle init failure
+            // Background init fail handled on click
         }
     }
 
@@ -94,22 +94,24 @@ fun LoginScreen(
                     ).getOrNull()
 
                     if (client == null) {
-                        viewModel.onCaptchaError("Security check initialization failed. Please retry.")
+                        viewModel.onCaptchaError("Security check (reCAPTCHA) could not be initialized. Please check your internet.")
                         return@launch
                     }
                     
                     recaptchaClient = client
                     
-                    // client.execute returns Result<String> in Kotlin
+                    // Challenge Execution
                     client.execute(RecaptchaAction.LOGIN)
                         .onSuccess { token ->
+                            // DEBUG: Temporary toast to prove the app generated the token
+                            Toast.makeText(context, "CAPTCHA Token Generated Successfully", Toast.LENGTH_SHORT).show()
                             viewModel.onCaptchaSuccess(token, customerId, password)
                         }
                         .onFailure { e ->
-                            viewModel.onCaptchaError(e.message ?: "Verification failed")
+                            viewModel.onCaptchaError("Security verification failed: ${e.message}")
                         }
                 } catch (e: Exception) {
-                    viewModel.onCaptchaError(e.message ?: "Security check failed")
+                    viewModel.onCaptchaError("Security error: ${e.message}")
                 }
             }
         }
@@ -147,7 +149,7 @@ fun LoginScreen(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(300.dp)
+                    .height(280.dp)
             )
 
             Surface(
@@ -161,7 +163,7 @@ fun LoginScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(32.dp)
+                        .padding(horizontal = 32.dp, vertical = 24.dp)
                 ) {
                     Text(
                         text = stringResource(R.string.login_welcome_title),
@@ -169,123 +171,136 @@ fun LoginScreen(
                         fontWeight = FontWeight.Bold,
                         color = MentorBlue
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = stringResource(R.string.login_welcome_subtitle),
                         fontSize = 14.sp,
                         color = Color.Gray
                     )
+                    
                     Spacer(modifier = Modifier.height(32.dp))
 
-                    when (val state = uiState) {
-                        is LoginUIState.Initial, is LoginUIState.CaptchaLoading, is LoginUIState.LoginLoading, is LoginUIState.Error, is LoginUIState.UpdatePassword -> {
-                            if (state is LoginUIState.Error) {
-                                Text(
-                                    text = state.message,
-                                    color = MaterialTheme.colorScheme.error,
-                                    fontSize = 12.sp,
-                                    modifier = Modifier.padding(bottom = 8.dp)
-                                )
-                            }
-
-                            OutlinedTextField(
-                                value = customerId,
-                                onValueChange = { customerId = it },
-                                placeholder = { Text(stringResource(R.string.hint_customer_id)) },
-                                leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = Color.LightGray) },
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(12.dp),
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = MentorBlue,
-                                    unfocusedBorderColor = Color(0xFFE5E7EB)
-                                )
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
-                            OutlinedTextField(
-                                value = password,
-                                onValueChange = { password = it },
-                                placeholder = { Text(stringResource(R.string.hint_password)) },
-                                leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = Color.LightGray) },
-                                visualTransformation = PasswordVisualTransformation(),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(12.dp),
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = MentorBlue,
-                                    unfocusedBorderColor = Color(0xFFE5E7EB)
-                                )
-                            )
-                            Spacer(modifier = Modifier.height(24.dp))
-                            
-                            if (state is LoginUIState.LoginLoading || state is LoginUIState.CaptchaLoading) {
-                                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        CircularProgressIndicator(color = MentorBlue)
-                                        Spacer(modifier = Modifier.height(8.dp))
-                                        Text(
-                                            text = if (state is LoginUIState.CaptchaLoading) "Verifying security..." else "Logging in...",
-                                            fontSize = 12.sp,
-                                            color = MentorBlue
-                                        )
-                                    }
-                                }
-                            } else {
-                                Button(
-                                    onClick = { 
-                                        if (customerId.isNotBlank() && password.isNotBlank()) {
-                                            viewModel.startLoginFlow() 
-                                        } else {
-                                            Toast.makeText(context, "Please enter credentials", Toast.LENGTH_SHORT).show()
-                                        }
-                                    },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(56.dp),
-                                    shape = RoundedCornerShape(12.dp),
-                                    colors = ButtonDefaults.buttonColors(containerColor = MentorBlue)
-                                ) {
-                                    Text(
-                                        text = stringResource(R.string.btn_login),
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.White
-                                    )
-                                }
-                            }
-
-                            Spacer(modifier = Modifier.height(24.dp))
-                            
-                            // reCAPTCHA Indicator (Visible Branding as required by Google)
-                            Card(
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = CardDefaults.cardColors(containerColor = Color(0xFFF3F4F6)),
-                                shape = RoundedCornerShape(8.dp)
+                    // Error Box
+                    if (uiState is LoginUIState.Error) {
+                        Card(
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFFFFEBEE)),
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Row(
-                                    modifier = Modifier.padding(12.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Security,
-                                        contentDescription = null,
-                                        tint = Color(0xFF4B5563),
-                                        modifier = Modifier.size(18.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = "Protected by reCAPTCHA Enterprise",
-                                        fontSize = 12.sp,
-                                        color = Color(0xFF4B5563),
-                                        fontWeight = FontWeight.Medium
-                                    )
-                                }
+                                Icon(Icons.Default.Security, contentDescription = null, tint = Color.Red, modifier = Modifier.size(20.dp))
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    text = (uiState as LoginUIState.Error).message,
+                                    color = Color.Red,
+                                    fontSize = 12.sp,
+                                    lineHeight = 16.sp
+                                )
                             }
                         }
-                        else -> Unit
+                    }
+
+                    OutlinedTextField(
+                        value = customerId,
+                        onValueChange = { customerId = it },
+                        placeholder = { Text(stringResource(R.string.hint_customer_id)) },
+                        leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = MentorBlue) },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MentorBlue,
+                            unfocusedBorderColor = Color(0xFFE5E7EB)
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    OutlinedTextField(
+                        value = password,
+                        onValueChange = { password = it },
+                        placeholder = { Text(stringResource(R.string.hint_password)) },
+                        leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = MentorBlue) },
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MentorBlue,
+                            unfocusedBorderColor = Color(0xFFE5E7EB)
+                        )
+                    )
+                    
+                    Spacer(modifier = Modifier.height(24.dp))
+                    
+                    if (uiState is LoginUIState.LoginLoading || uiState is LoginUIState.CaptchaLoading) {
+                        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                CircularProgressIndicator(color = MentorBlue, modifier = Modifier.size(32.dp))
+                                Spacer(modifier = Modifier.height(12.dp))
+                                Text(
+                                    text = if (uiState is LoginUIState.CaptchaLoading) "Performing security check..." else "Authenticating...",
+                                    fontSize = 13.sp,
+                                    color = MentorBlue,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                        }
+                    } else {
+                        Button(
+                            onClick = { 
+                                if (customerId.isNotBlank() && password.isNotBlank()) {
+                                    viewModel.startLoginFlow() 
+                                } else {
+                                    Toast.makeText(context, "Please enter your Customer ID and Password", Toast.LENGTH_SHORT).show()
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = MentorBlue)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.btn_login),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(32.dp))
+                    
+                    // Visible reCAPTCHA Branding (Required for invisible reCAPTCHA)
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        HorizontalDivider(color = Color(0xFFE5E7EB), thickness = 1.dp, modifier = Modifier.padding(bottom = 16.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.Security,
+                                contentDescription = null,
+                                tint = Color(0xFF9CA3AF),
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Secured by reCAPTCHA Enterprise",
+                                fontSize = 11.sp,
+                                color = Color(0xFF6B7280)
+                            )
+                        }
+                        Text(
+                            text = "This app follows Google Privacy Policy and Terms.",
+                            fontSize = 10.sp,
+                            color = Color(0xFF9CA3AF),
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.weight(1f))
                     
                     TextButton(
                         onClick = { navController.navigate("request_registration") },

@@ -110,6 +110,17 @@ fun SettingsScreen(
                 onClick = { navController.navigate(Screen.AboutApp.route) }
             )
 
+            Spacer(Modifier.height(16.dp))
+
+            SettingsItem(
+                icon = Icons.Default.Lock,
+                iconBg = Color(0xFFFFF3E0),
+                iconTint = Color(0xFFF57C00),
+                title = stringResource(R.string.setting_change_password),
+                subtitle = stringResource(R.string.setting_change_password_sub),
+                onClick = { navController.navigate(Screen.ChangePassword.route) }
+            )
+
             Spacer(Modifier.height(20.dp))
 
             // ── Need Help Banner ─────────────────────────────────────
