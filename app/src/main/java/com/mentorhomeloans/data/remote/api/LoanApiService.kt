@@ -21,7 +21,7 @@ interface LoanApiService {
     ): ApiResponse<LoanAccountDto>
 
     @Headers("Content-Type: application/json-patch+json")
-    @POST("Get_All_Loan_Details_By_Customer_Phone_Number")
+    @POST("Get_All_Loan_Details_By_CustomerId")
     suspend fun getAllLoanDetails(
         @Body request: GetLoanDetailsRequestDto
     ): List<GetLoanDetailsResponseItemDto>

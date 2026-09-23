@@ -1,14 +1,13 @@
 package com.mentorhomeloans.feature.documents
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material3.*
@@ -16,21 +15,22 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.mentorhomeloans.domain.model.Document
-import com.mentorhomeloans.domain.model.DocumentType
+import com.mentorhomeloans.R
 import com.mentorhomeloans.core.ui.components.ErrorState
+import com.mentorhomeloans.domain.model.Document
 import com.mentorhomeloans.ui.theme.MentorBlue
 
 /**
- * Loan Documents screen matching the provided design.
+ * Loan Documents screen displaying master records and allowing document requests.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,15 +40,18 @@ fun DocumentsScreen(
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val requestingDocumentId by viewModel.requestingDocumentId.collectAsState()
     val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(key1 = true) {
-        viewModel.downloadEvent.collect { message ->
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+    LaunchedEffect(Unit) {
+        viewModel.messageEvent.collect { message ->
+            snackbarHostState.showSnackbar(message)
         }
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
@@ -100,7 +103,7 @@ fun DocumentsScreen(
         when (val state = uiState) {
             is DocumentsUIState.Loading -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(color = MentorBlue)
                 }
             }
             is DocumentsUIState.Success -> {
@@ -114,13 +117,13 @@ fun DocumentsScreen(
                     item {
                         Spacer(Modifier.height(8.dp))
                         Image(
-                            painter = androidx.compose.ui.res.painterResource(id = com.mentorhomeloans.R.drawable.document_banner),
+                            painter = painterResource(id = R.drawable.document_banner),
                             contentDescription = "Secure & Easy Access",
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp)
                                 .clip(RoundedCornerShape(16.dp)),
-                            contentScale = androidx.compose.ui.layout.ContentScale.FillWidth
+                            contentScale = ContentScale.FillWidth
                         )
                         Spacer(Modifier.height(20.dp))
                     }
@@ -135,17 +138,19 @@ fun DocumentsScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                "Your Documents",
+                                "Available Documents",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.Black
                             )
-                            Text(
-                                "${state.documents.size} Documents",
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = MentorBlue
-                            )
+                            if (state.loanAcNo.isNotBlank()) {
+                                Text(
+                                    "A/C: ${state.loanAcNo}",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MentorBlue
+                                )
+                            }
                         }
                         Spacer(Modifier.height(12.dp))
                     }
@@ -154,7 +159,8 @@ fun DocumentsScreen(
                     items(state.documents) { doc ->
                         DocumentItemCard(
                             document = doc,
-                            onDownload = { viewModel.downloadDocument(doc) }
+                            isRequesting = requestingDocumentId == doc.id,
+                            onRequest = { viewModel.requestDocument(doc) }
                         )
                         Spacer(Modifier.height(10.dp))
                     }
@@ -198,16 +204,11 @@ fun DocumentsScreen(
                                         color = Color.Black
                                     )
                                     Text(
-                                        "All documents are encrypted and stored securely.",
+                                        "All documents are encrypted and processed securely.",
                                         fontSize = 12.sp,
                                         color = Color.Gray
                                     )
                                 }
-                                Icon(
-                                    imageVector = Icons.Default.ChevronRight,
-                                    contentDescription = null,
-                                    tint = Color.LightGray
-                                )
                             }
                         }
                     }
@@ -219,7 +220,7 @@ fun DocumentsScreen(
                         .fillMaxSize()
                         .padding(paddingValues)
                 ) {
-                    ErrorState(message = state.message, onRetry = { viewModel.loadDocuments() })
+                    ErrorState(message = state.message, onRetry = { viewModel.loadData() })
                 }
             }
         }
@@ -227,21 +228,17 @@ fun DocumentsScreen(
 }
 
 @Composable
-private fun DocumentItemCard(document: Document, onDownload: () -> Unit) {
-    val (iconBg, iconTint, iconVector) = when (document.type) {
-        DocumentType.SANCTION_LETTER -> Triple(Color(0xFFE3F2FD), MentorBlue, Icons.Default.Description)
-        DocumentType.LOAN_AGREEMENT  -> Triple(Color(0xFFE8F5E9), Color(0xFF43A047), Icons.Default.Assignment)
-        DocumentType.KYC_DOCUMENT    -> Triple(Color(0xFFFFF3E0), Color(0xFFFF9800), Icons.Default.AccountBox)
-        DocumentType.DISBURSEMENT_LETTER -> Triple(Color(0xFFF3E5F5), Color(0xFF8E24AA), Icons.Default.AttachMoney)
-        DocumentType.INSURANCE_POLICY -> Triple(Color(0xFFE0F2F1), Color(0xFF00897B), Icons.Default.Shield)
-        DocumentType.NOC             -> Triple(Color(0xFFEDE7F6), Color(0xFF5E35B1), Icons.Default.CheckCircle)
-        else                         -> Triple(Color(0xFFF5F5F5), Color(0xFF757575), Icons.Default.InsertDriveFile)
-    }
-
-    val sizeDisplay = if (document.sizeKb >= 1024) {
-        String.format("%.1f MB", document.sizeKb / 1024f)
-    } else {
-        "${document.sizeKb} KB"
+private fun DocumentItemCard(
+    document: Document,
+    isRequesting: Boolean,
+    onRequest: () -> Unit
+) {
+    val (iconBg, iconTint, iconVector) = when {
+        document.documentName.contains("Interest", ignoreCase = true) -> Triple(Color(0xFFE3F2FD), MentorBlue, Icons.Default.Percent)
+        document.documentName.contains("LOD", ignoreCase = true) -> Triple(Color(0xFFE8F5E9), Color(0xFF43A047), Icons.Default.FolderZip)
+        document.documentName.contains("Sanction", ignoreCase = true) -> Triple(Color(0xFFFFF3E0), Color(0xFFFF9800), Icons.Default.Verified)
+        document.documentName.contains("SOA", ignoreCase = true) -> Triple(Color(0xFFF3E5F5), Color(0xFF8E24AA), Icons.AutoMirrored.Filled.ReceiptLong)
+        else -> Triple(Color(0xFFE8EAF6), MentorBlue, Icons.Default.Description)
     }
 
     Card(
@@ -258,7 +255,7 @@ private fun DocumentItemCard(document: Document, onDownload: () -> Unit) {
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Document type icon
+            // Document Icon
             Box(
                 modifier = Modifier
                     .size(52.dp)
@@ -275,78 +272,56 @@ private fun DocumentItemCard(document: Document, onDownload: () -> Unit) {
 
             Spacer(Modifier.width(14.dp))
 
+            // Document Details
             Column(modifier = Modifier.weight(1f)) {
-                // Title + lock icon if protected
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = document.title,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
-                    )
-                    if (document.isPasswordProtected) {
-                        Spacer(Modifier.width(6.dp))
-                        Icon(
-                            imageVector = Icons.Default.Lock,
-                            contentDescription = "Password protected",
-                            modifier = Modifier.size(14.dp),
-                            tint = MentorBlue
-                        )
-                    }
-                }
+                Text(
+                    text = document.documentName,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = document.description,
+                    text = "Official Loan Document",
                     fontSize = 12.sp,
-                    color = Color.Gray,
-                    lineHeight = 16.sp
+                    color = Color.Gray
                 )
-                Spacer(Modifier.height(8.dp))
-                // PDF badge + size
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.CheckCircle,
-                        contentDescription = null,
-                        tint = Color(0xFF43A047),
-                        modifier = Modifier.size(13.dp)
-                    )
-                    Spacer(Modifier.width(4.dp))
-                    Text(
-                        text = "${document.fileType.extension.removePrefix(".").uppercase()} • $sizeDisplay",
-                        fontSize = 11.sp,
-                        color = Color(0xFF43A047),
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
             }
 
             Spacer(Modifier.width(12.dp))
 
-            // Download button
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .padding(start = 4.dp)
+            // Request Button
+            Button(
+                onClick = onRequest,
+                enabled = !isRequesting,
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = MentorBlue),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                modifier = Modifier.height(38.dp)
             ) {
-                IconButton(
-                    onClick = onDownload,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .background(Color(0xFFE3F2FD), CircleShape)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.FileDownload,
-                        contentDescription = "Download ${document.title}",
-                        tint = MentorBlue,
-                        modifier = Modifier.size(22.dp)
+                if (isRequesting) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(16.dp),
+                        color = Color.White,
+                        strokeWidth = 2.dp
                     )
+                } else {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Send,
+                            contentDescription = null,
+                            modifier = Modifier.size(14.dp),
+                            tint = Color.White
+                        )
+                        Spacer(Modifier.width(6.dp))
+                        Text(
+                            text = "Request",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
                 }
-                Text(
-                    "Download",
-                    fontSize = 10.sp,
-                    color = MentorBlue,
-                    fontWeight = FontWeight.SemiBold
-                )
             }
         }
     }

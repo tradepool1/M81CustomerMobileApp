@@ -1,6 +1,5 @@
 package com.mentorhomeloans.feature.statements
 
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,6 +49,8 @@ fun StatementsScreen(
     val selectedPeriod by viewModel.selectedPeriod.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
     val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
     var showCustomRangeDialog by remember { mutableStateOf(false) }
 
     // Selected tab state: 0 = SOA Ledger, 1 = Documents & Downloads
@@ -56,7 +58,7 @@ fun StatementsScreen(
 
     LaunchedEffect(key1 = true) {
         viewModel.downloadEvent.collect { message ->
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+            snackbarHostState.showSnackbar(message)
         }
     }
 
@@ -78,7 +80,8 @@ fun StatementsScreen(
                 navigationIcon = Icons.Default.ArrowBack,
                 onNavigationClick = { navController.popBackStack() }
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         Column(
             modifier = modifier
@@ -373,7 +376,9 @@ fun StatementsScreen(
                                     onDownloadPdf = {
                                         state.allStatements.firstOrNull()?.let {
                                             viewModel.downloadStatement(it, isPdf = true)
-                                        } ?: Toast.makeText(context, "SOA statement queued for download.", Toast.LENGTH_SHORT).show()
+                                        } ?: coroutineScope.launch {
+                                            snackbarHostState.showSnackbar("SOA statement queued for download.")
+                                        }
                                     },
                                     onDownloadCsv = {
                                         state.allStatements.firstOrNull()?.let {

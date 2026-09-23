@@ -37,7 +37,7 @@ class ChangePasswordViewModel @Inject constructor(
     /**
      * Called after CAPTCHA success to perform the actual update.
      */
-    fun onCaptchaSuccess(token: String, newPassword: String) {
+    fun onCaptchaSuccess(token: String, oldPassword: String, newPassword: String) {
         val customerId = sessionManager.getCustomerId() ?: ""
         if (customerId.isBlank()) {
             _uiState.value = ChangePasswordUIState.Error("User not logged in")
@@ -46,7 +46,7 @@ class ChangePasswordViewModel @Inject constructor(
 
         viewModelScope.launch {
             _uiState.value = ChangePasswordUIState.Loading
-            when (val result = authRepository.updatePassword(customerId, newPassword, token)) {
+            when (val result = authRepository.updatePassword(customerId, oldPassword, newPassword, token)) {
                 is Result.Success -> {
                     _uiState.value = ChangePasswordUIState.Success(result.data)
                 }

@@ -22,7 +22,8 @@
     <!-- Login Screen -->
     <string name="login_welcome_title">Welcome Back!</string>
     <string name="login_welcome_subtitle">Login to continue to your account</string>
-    <string name="recaptcha_site_key" translatable="false">6LfHOb4tAAAAAPkhOBhJA7nwvZCyF4sWzS7EnSse</string>
+  <!--  <string name="recaptcha_site_key" translatable="false">6LfHOb4tAAAAAPkhOBhJA7nwvZCyF4sWzS7EnSse</string>-->
+    <string name="recaptcha_site_key" translatable="false">6LcHtsgtAAAAAPylInc3QSpFqg_7g6fovYbg043O</string>
     <string name="hint_branch_code">Branch Code</string>
     <string name="hint_mobile_number">Mobile Number</string>
     <string name="hint_customer_id">Customer ID</string>

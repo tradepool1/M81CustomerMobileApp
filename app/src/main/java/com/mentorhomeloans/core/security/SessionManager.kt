@@ -20,38 +20,24 @@ class SessionManager @Inject constructor(
     val isSessionActive: StateFlow<Boolean> = _isSessionActive.asStateFlow()
 
     /**
-     * Saves full session tokens to secure storage.
+     * Saves full session tokens including customerId and mobileNumber to secure storage.
      */
     fun saveSession(
         jwtToken: String,
         refreshToken: String,
-        mobileNumber: String,
+        customerId: String = "",
+        mobileNumber: String = "",
         jwtExpiry: String? = null,
         refreshExpiry: String? = null
     ) {
         encryptedPrefs.saveString(Constants.SECURE_KEY_JWT, jwtToken)
         encryptedPrefs.saveString(Constants.SECURE_KEY_REFRESH, refreshToken)
-        encryptedPrefs.saveString(Constants.SECURE_KEY_MOBILE, mobileNumber)
-        encryptedPrefs.saveString(Constants.SECURE_KEY_JWT_EXPIRY, jwtExpiry)
-        encryptedPrefs.saveString(Constants.SECURE_KEY_REFRESH_EXPIRY, refreshExpiry)
-        _isSessionActive.value = true
-    }
-
-    /**
-     * Saves full session tokens including customerId to secure storage.
-     */
-    fun saveSession(
-        jwtToken: String,
-        refreshToken: String,
-        customerId: String,
-        mobileNumber: String,
-        jwtExpiry: String? = null,
-        refreshExpiry: String? = null
-    ) {
-        encryptedPrefs.saveString(Constants.SECURE_KEY_JWT, jwtToken)
-        encryptedPrefs.saveString(Constants.SECURE_KEY_REFRESH, refreshToken)
-        encryptedPrefs.saveString(Constants.SECURE_KEY_CUSTOMER_ID, customerId)
-        encryptedPrefs.saveString(Constants.SECURE_KEY_MOBILE, mobileNumber)
+        if (customerId.isNotBlank()) {
+            encryptedPrefs.saveString(Constants.SECURE_KEY_CUSTOMER_ID, customerId)
+        }
+        if (mobileNumber.isNotBlank()) {
+            encryptedPrefs.saveString(Constants.SECURE_KEY_MOBILE, mobileNumber)
+        }
         encryptedPrefs.saveString(Constants.SECURE_KEY_JWT_EXPIRY, jwtExpiry)
         encryptedPrefs.saveString(Constants.SECURE_KEY_REFRESH_EXPIRY, refreshExpiry)
         _isSessionActive.value = true

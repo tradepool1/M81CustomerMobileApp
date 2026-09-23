@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
  * Request body for Get_All_Loan_Details_By_Customer_Phone_Number endpoint.
  */
 data class GetLoanDetailsRequestDto(
-    @SerializedName("phoneNo") val phoneNo: String
+    @SerializedName("CustomerId") val customerId: String
 )
 
 /**

@@ -12,9 +12,10 @@ class UpdatePasswordUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         customerId: String,
-        password: String,
+        oldPassword: String,
+        newPassword: String,
         captchaToken: String
     ): Result<String> {
-        return repository.updatePassword(customerId, password, captchaToken)
+        return repository.updatePassword(customerId, oldPassword, newPassword, captchaToken)
     }
 }

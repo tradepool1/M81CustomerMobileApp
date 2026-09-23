@@ -24,10 +24,12 @@ object Constants {
     const val SECURE_KEY_REFRESH_EXPIRY = "refresh_expiry"
 
     // ── DataStore Preference Keys ─────────────────────────────────────────────
-    const val PREF_KEY_THEME         = "is_dark_mode"
-    const val PREF_KEY_ONBOARDING    = "is_onboarding_completed"
-    const val PREF_KEY_NOTIFICATIONS = "notifications_enabled"
-    const val PREF_KEY_IS_LOGGED_IN  = "is_logged_in"
+    const val PREF_KEY_THEME                = "is_dark_mode"
+    const val PREF_KEY_ONBOARDING           = "is_onboarding_completed"
+    const val PREF_KEY_NOTIFICATIONS        = "notifications_enabled"
+    const val PREF_KEY_IS_LOGGED_IN         = "is_logged_in"
+    const val PREF_KEY_SELECTED_LOAN_AC_NO  = "selected_loan_account_number"
+    const val PREF_KEY_SELECTED_LOAN_ID     = "selected_loan_id"
 
     // ── Database ──────────────────────────────────────────────────────────────
     const val DATABASE_NAME = "mentor_home_loans_db"

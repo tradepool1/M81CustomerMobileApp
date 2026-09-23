@@ -27,9 +27,9 @@ class RemoteLoanRepository @Inject constructor(
 
     override fun getLoanAccount(customerId: String): Flow<Result<LoanAccount>> = flow {
         emit(Result.Loading)
-        val phoneNo = sessionManager.getMobileNumber() ?: customerId
+        val customerId = sessionManager.getCustomerId() ?: customerId
         try {
-            val dtoList = loanApiService.getAllLoanDetails(GetLoanDetailsRequestDto(phoneNo = phoneNo))
+            val dtoList = loanApiService.getAllLoanDetails(GetLoanDetailsRequestDto(customerId = customerId))
             if (dtoList.isNotEmpty()) {
                 val domainList = dtoList.map { LoanMapper.fromApiDtoToDomain(it) }
                 // Save to DB
@@ -91,9 +91,9 @@ class RemoteLoanRepository @Inject constructor(
 
     override fun getAllLoanAccounts(customerId: String): Flow<Result<List<LoanAccount>>> = flow {
         emit(Result.Loading)
-        val phoneNo = sessionManager.getMobileNumber() ?: customerId
+        val customerId = sessionManager.getCustomerId() ?: customerId
         try {
-            val dtoList = loanApiService.getAllLoanDetails(GetLoanDetailsRequestDto(phoneNo = phoneNo))
+            val dtoList = loanApiService.getAllLoanDetails(GetLoanDetailsRequestDto(customerId = customerId))
             if (dtoList.isNotEmpty()) {
                 val domainList = dtoList.map { LoanMapper.fromApiDtoToDomain(it) }
                 // Save to DB cache
@@ -116,9 +116,9 @@ class RemoteLoanRepository @Inject constructor(
     }
 
     override suspend fun refreshLoanAccount(customerId: String): Result<Unit> {
-        val phoneNo = sessionManager.getMobileNumber() ?: customerId
+        val customerId = sessionManager.getCustomerId() ?: customerId
         return try {
-            val dtoList = loanApiService.getAllLoanDetails(GetLoanDetailsRequestDto(phoneNo = phoneNo))
+            val dtoList = loanApiService.getAllLoanDetails(GetLoanDetailsRequestDto(customerId = customerId))
             val domainList = dtoList.map { LoanMapper.fromApiDtoToDomain(it) }
             domainList.forEach { loanDao.insertLoanAccount(LoanMapper.toEntity(it)) }
             Result.Success(Unit)

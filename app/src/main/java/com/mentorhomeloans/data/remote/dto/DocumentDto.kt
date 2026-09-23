@@ -3,17 +3,25 @@ package com.mentorhomeloans.data.remote.dto
 import com.google.gson.annotations.SerializedName
 
 /**
- * DTO detailing document elements returned by remote APIs.
+ * Item inside GetMasterRecords response for LoanDocuments.
  */
-data class DocumentDto(
-    @SerializedName("id") val id: String,
-    @SerializedName("title") val title: String,
-    @SerializedName("description") val description: String,
-    @SerializedName("type") val type: String,
-    @SerializedName("uploadedDate") val uploadedDate: String,
-    @SerializedName("fileUrl") val fileUrl: String,
-    @SerializedName("fileType") val fileType: String,
-    @SerializedName("sizeKb") val sizeKb: Int,
-    @SerializedName("isPasswordProtected") val isPasswordProtected: Boolean,
-    @SerializedName("thumbnailUrl") val thumbnailUrl: String?
+data class MasterLoanDocumentDto(
+    @SerializedName("Id") val id: Int,
+    @SerializedName("DocumentName") val documentName: String
+)
+
+/**
+ * Response from GET /api/MobileApp/GetMasterRecords
+ */
+data class GetMasterRecordsResponseDto(
+    @SerializedName("LoanDocuments") val loanDocuments: List<MasterLoanDocumentDto>?
+)
+
+/**
+ * Request body for POST /api/MobileApp/RequestDocument
+ */
+data class RequestDocumentRequestDto(
+    @SerializedName("customerId") val customerId: String,
+    @SerializedName("loanAcNo") val loanAcNo: String,
+    @SerializedName("documentTypeId") val documentTypeId: Int
 )

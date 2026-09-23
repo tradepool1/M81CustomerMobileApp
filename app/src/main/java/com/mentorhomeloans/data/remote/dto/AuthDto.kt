@@ -34,16 +34,17 @@ data class CommonResponseDto(
  * Request body for Login endpoint.
  */
 data class LoginRequestDto(
-    @SerializedName("customerId") val customerId: String,
-    @SerializedName("password") val password: String,
-    @SerializedName("captchaToken") val captchaToken: String
+    @SerializedName("CustomerId") val customerId: String,
+    @SerializedName("NewPassword") val password: String,
+    @SerializedName("CaptchaToken") val captchaToken: String,
 )
 
 /**
  * Request body for UpdatePassword endpoint.
  */
 data class UpdatePasswordRequestDto(
-    @SerializedName("customerId") val customerId: String,
-    @SerializedName("password") val password: String,
-    @SerializedName("captchaToken") val captchaToken: String
+    @SerializedName("CustomerId") val customerId: String,
+    @SerializedName("OldPassword") val oldPassword: String,
+    @SerializedName("NewPassword") val newPassword: String,
+    @SerializedName("CaptchaToken") val captchaToken: String = ""
 )

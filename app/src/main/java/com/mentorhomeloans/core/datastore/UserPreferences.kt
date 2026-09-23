@@ -11,5 +11,7 @@ data class UserPreferences(
     val isDarkModeEnabled: Boolean?,
     val areNotificationsEnabled: Boolean,
     val isOnboardingCompleted: Boolean,
-    val isLoggedIn: Boolean = false
+    val isLoggedIn: Boolean = false,
+    val selectedLoanAcNo: String = "",
+    val selectedLoanId: String = ""
 )

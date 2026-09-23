@@ -62,7 +62,8 @@ class MockAuthRepository @Inject constructor(
 
     override suspend fun updatePassword(
         customerId: String,
-        password: String,
+        oldPassword: String,
+        newPassword: String,
         captchaToken: String
     ): Result<String> {
         delay(1000)

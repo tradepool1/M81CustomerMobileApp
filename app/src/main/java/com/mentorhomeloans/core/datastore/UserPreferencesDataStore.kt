@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
+import androidx.datastore.preferences.core.stringPreferencesKey
+
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "mentor_user_prefs")
 
 /**
@@ -26,13 +28,17 @@ class UserPreferencesDataStore @Inject constructor(
     private val onboardingKey = booleanPreferencesKey(Constants.PREF_KEY_ONBOARDING)
     private val notificationKey = booleanPreferencesKey(Constants.PREF_KEY_NOTIFICATIONS)
     private val isLoggedInKey = booleanPreferencesKey(Constants.PREF_KEY_IS_LOGGED_IN)
+    private val selectedLoanAcNoKey = stringPreferencesKey(Constants.PREF_KEY_SELECTED_LOAN_AC_NO)
+    private val selectedLoanIdKey = stringPreferencesKey(Constants.PREF_KEY_SELECTED_LOAN_ID)
 
     val userPreferencesFlow: Flow<UserPreferences> = context.dataStore.data.map { preferences ->
         UserPreferences(
             isDarkModeEnabled = if (preferences.contains(themeKey)) preferences[themeKey] else null,
             areNotificationsEnabled = preferences[notificationKey] ?: true,
             isOnboardingCompleted = preferences[onboardingKey] ?: false,
-            isLoggedIn = preferences[isLoggedInKey] ?: false
+            isLoggedIn = preferences[isLoggedInKey] ?: false,
+            selectedLoanAcNo = preferences[selectedLoanAcNoKey] ?: "",
+            selectedLoanId = preferences[selectedLoanIdKey] ?: ""
         )
     }
 
@@ -57,6 +63,13 @@ class UserPreferencesDataStore @Inject constructor(
     suspend fun setLoggedIn(isLoggedIn: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[isLoggedInKey] = isLoggedIn
+        }
+    }
+
+    suspend fun setSelectedLoan(accountNumber: String, loanId: String) {
+        context.dataStore.edit { preferences ->
+            preferences[selectedLoanAcNoKey] = accountNumber
+            preferences[selectedLoanIdKey] = loanId
         }
     }
 }

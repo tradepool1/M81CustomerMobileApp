@@ -50,9 +50,15 @@ interface AuthRepository {
      * Updates the user's password.
      *
      * @param customerId   The ID of the customer.
-     * @param password     The new password.
+     * @param oldPassword  The current password.
+     * @param newPassword  The new password.
      * @param captchaToken The token from captcha verification.
      * @return [Result.Success] with the server message on success.
      */
-    suspend fun updatePassword(customerId: String, password: String, captchaToken: String): Result<String>
+    suspend fun updatePassword(
+        customerId: String,
+        oldPassword: String,
+        newPassword: String,
+        captchaToken: String
+    ): Result<String>
 }

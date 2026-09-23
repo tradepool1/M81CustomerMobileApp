@@ -263,15 +263,19 @@ fun RequestRegistrationScreen(
                 Button(
                     onClick = {
                         if (validate()) {
-                            viewModel.submitRegistration(
-                                name     = fullName.trim(),
-                                email    = email.trim(),
-                                mobileNo = mobile.trim(),
-                                stateId  = selectedState!!.stateId,
-                                branchId = selectedBranch!!.branchId,
-                                loanAcNo = loanNo.trim(),
-                                panNo    = panNo.trim()
-                            )
+                            val state = selectedState
+                            val branch = selectedBranch
+                            if (state != null && branch != null) {
+                                viewModel.submitRegistration(
+                                    name     = fullName.trim(),
+                                    email    = email.trim(),
+                                    mobileNo = mobile.trim(),
+                                    stateId  = state.stateId,
+                                    branchId = branch.branchId,
+                                    loanAcNo = loanNo.trim(),
+                                    panNo    = panNo.trim()
+                                )
+                            }
                         }
                     },
                     enabled  = !isSubmitting,

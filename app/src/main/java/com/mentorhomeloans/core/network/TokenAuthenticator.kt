@@ -34,10 +34,11 @@ class TokenAuthenticator @Inject constructor(
         }
 
         val refreshToken = sessionManager.getRefreshToken()
-        val mobileNumber = sessionManager.getMobileNumber()
+        val customerId = sessionManager.getCustomerId() ?: ""
+        val mobileNumber = sessionManager.getMobileNumber() ?: ""
 
-        if (refreshToken.isNullOrBlank() || mobileNumber.isNullOrBlank()) {
-            Timber.w("No refresh token or mobile number found. Cannot refresh.")
+        if (refreshToken.isNullOrBlank()) {
+            Timber.w("No refresh token found. Cannot refresh.")
             return null
         }
 
@@ -70,9 +71,9 @@ class TokenAuthenticator @Inject constructor(
                 )
 
                 val refreshResponse = refreshCall.execute()
+                val body = refreshResponse.body()
 
-                if (refreshResponse.isSuccessful && refreshResponse.body()?.status == true) {
-                    val body = refreshResponse.body()!!
+                if (refreshResponse.isSuccessful && body?.status == true) {
                     val newAccessToken = body.accessToken
                     val newRefreshToken = body.refreshToken
 
@@ -80,6 +81,7 @@ class TokenAuthenticator @Inject constructor(
                         sessionManager.saveSession(
                             jwtToken = newAccessToken,
                             refreshToken = newRefreshToken ?: refreshToken,
+                            customerId = customerId,
                             mobileNumber = mobileNumber,
                             jwtExpiry = body.accessTokenExpiresAt,
                             refreshExpiry = body.refreshTokenExpiresAt

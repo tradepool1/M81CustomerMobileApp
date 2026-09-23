@@ -123,7 +123,7 @@ fun SettingsScreen(
 
             Spacer(Modifier.height(20.dp))
 
-            // ── Need Help Banner ─────────────────────────────────────
+            /*// ── Need Help Banner ─────────────────────────────────────
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -179,7 +179,7 @@ fun SettingsScreen(
                         )
                     }
                 }
-            }
+            }*/
 
             Spacer(Modifier.height(16.dp))
         }

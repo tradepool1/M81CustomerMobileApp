@@ -14,6 +14,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+import com.mentorhomeloans.core.datastore.UserPreferencesDataStore
+import kotlinx.coroutines.flow.first
+
 /**
  * DashboardViewModel managing loan accounts summaries caching states.
  */
@@ -21,7 +24,8 @@ import javax.inject.Inject
 class DashboardViewModel @Inject constructor(
     private val getLoanAccountsUseCase: GetLoanAccountsUseCase,
     private val getLoanSummaryUseCase: GetLoanSummaryUseCase,
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    private val preferencesDataStore: UserPreferencesDataStore
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<DashboardUIState>(DashboardUIState.Loading)
@@ -37,17 +41,23 @@ class DashboardViewModel @Inject constructor(
     fun loadLoanData() {
         viewModelScope.launch {
             _uiState.value = DashboardUIState.Loading
-            val phoneNo = sessionManager.getMobileNumber() ?: ""
-            getLoanAccountsUseCase(phoneNo).collect { result ->
+            val customerId = sessionManager.getCustomerId() ?: ""
+            getLoanAccountsUseCase(customerId).collect { result ->
                 when (result) {
                     is Result.Success -> {
                         allLoansList = result.data
                         if (allLoansList.isNotEmpty()) {
-                            // Ensure selected index is within bounds
-                            if (currentSelectedIndex >= allLoansList.size) {
-                                currentSelectedIndex = 0
-                            }
-                            _uiState.value = DashboardUIState.Success(allLoansList[currentSelectedIndex], allLoansList)
+                            // Check if a loan was previously selected in preferences
+                            val savedPrefs = preferencesDataStore.userPreferencesFlow.first()
+                            val savedAcNo = savedPrefs.selectedLoanAcNo
+                            val foundIndex = allLoansList.indexOfFirst { it.accountNumber == savedAcNo }
+
+                            currentSelectedIndex = if (foundIndex >= 0) foundIndex else 0
+
+                            val selectedLoan = allLoansList[currentSelectedIndex]
+                            preferencesDataStore.setSelectedLoan(selectedLoan.accountNumber, selectedLoan.id)
+
+                            _uiState.value = DashboardUIState.Success(selectedLoan, allLoansList)
                         } else {
                             _uiState.value = DashboardUIState.Error("No loans found")
                         }
@@ -62,13 +72,18 @@ class DashboardViewModel @Inject constructor(
     fun selectLoan(index: Int) {
         if (allLoansList.isNotEmpty() && index in allLoansList.indices) {
             currentSelectedIndex = index
-            _uiState.value = DashboardUIState.Success(allLoansList[currentSelectedIndex], allLoansList)
+            val selectedLoan = allLoansList[currentSelectedIndex]
+            _uiState.value = DashboardUIState.Success(selectedLoan, allLoansList)
+            viewModelScope.launch {
+                preferencesDataStore.setSelectedLoan(selectedLoan.accountNumber, selectedLoan.id)
+            }
         }
     }
 
     fun refreshData() {
         viewModelScope.launch {
-            getLoanSummaryUseCase("CUST00123")
+            val customerId = sessionManager.getCustomerId() ?: ""
+            getLoanSummaryUseCase(customerId)
         }
     }
 }

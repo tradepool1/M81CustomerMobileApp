@@ -52,7 +52,7 @@ class RemoteAuthRepository @Inject constructor(
                     jwtToken      = accessToken,
                     refreshToken  = refreshToken,
                     customerId    = customerId,
-                    mobileNumber  = "", // Mobile no. might be returned by API or not needed if login is by CUST ID
+                    mobileNumber  = "",
                     jwtExpiry     = response.accessTokenExpiresAt,
                     refreshExpiry = response.refreshTokenExpiresAt
                 )
@@ -106,14 +106,16 @@ class RemoteAuthRepository @Inject constructor(
      */
     override suspend fun updatePassword(
         customerId: String,
-        password: String,
+        oldPassword: String,
+        newPassword: String,
         captchaToken: String
     ): Result<String> {
         return try {
             val response = authApiService.updatePassword(
                 UpdatePasswordRequestDto(
                     customerId = customerId,
-                    password = password,
+                    oldPassword = oldPassword,
+                    newPassword = newPassword,
                     captchaToken = captchaToken
                 )
             )

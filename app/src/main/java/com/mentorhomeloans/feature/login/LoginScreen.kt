@@ -1,12 +1,10 @@
 package com.mentorhomeloans.feature.login
 
-import android.app.Application
-import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -20,21 +18,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import com.google.android.recaptcha.Recaptcha
-import com.google.android.recaptcha.RecaptchaAction
-import com.google.android.recaptcha.RecaptchaClient
 import com.mentorhomeloans.R
 import com.mentorhomeloans.core.navigation.Screen
 import com.mentorhomeloans.ui.theme.MentorBlue
@@ -54,24 +49,12 @@ fun LoginScreen(
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val focusManager: FocusManager = LocalFocusManager.current
+    val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
-
-    val siteKey = stringResource(R.string.recaptcha_site_key)
-    var recaptchaClient by remember { mutableStateOf<RecaptchaClient?>(null) }
 
     // State for login fields
     var customerId by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-
-    // Initialize reCAPTCHA Client
-    LaunchedEffect(siteKey) {
-        try {
-            val result = Recaptcha.getClient(context.applicationContext as Application, siteKey, 10000L)
-            recaptchaClient = result.getOrNull()
-        } catch (e: Exception) {
-            // Background init fail handled on click
-        }
-    }
 
     // Handle Login Success Navigation
     LaunchedEffect(uiState) {
@@ -82,45 +65,22 @@ fun LoginScreen(
         }
     }
 
-    // Handle reCAPTCHA Trigger
+    // Handle reCAPTCHA Trigger (if triggered programmatically)
     LaunchedEffect(Unit) {
         viewModel.captchaTrigger.collect {
-            coroutineScope.launch {
-                try {
-                    val client = recaptchaClient ?: Recaptcha.getClient(
-                        context.applicationContext as Application,
-                        siteKey,
-                        10000L
-                    ).getOrNull()
-
-                    if (client == null) {
-                        viewModel.onCaptchaError("Security check (reCAPTCHA) could not be initialized. Please check your internet.")
-                        return@launch
-                    }
-                    
-                    recaptchaClient = client
-                    
-                    // Challenge Execution
-                    client.execute(RecaptchaAction.LOGIN)
-                        .onSuccess { token ->
-                            // DEBUG: Temporary toast to prove the app generated the token
-                            Toast.makeText(context, "CAPTCHA Token Generated Successfully", Toast.LENGTH_SHORT).show()
-                            viewModel.onCaptchaSuccess(token, customerId, password)
-                        }
-                        .onFailure { e ->
-                            viewModel.onCaptchaError("Security verification failed: ${e.message}")
-                        }
-                } catch (e: Exception) {
-                    viewModel.onCaptchaError("Security error: ${e.message}")
-                }
+            if (customerId.isNotBlank() && password.isNotBlank()) {
+                viewModel.login(customerId.trim(), password.trim())
             }
         }
     }
 
-    // Handle Toast events
+    // Handle Snackbar events
     LaunchedEffect(Unit) {
         viewModel.toastEvent.collect { message ->
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+            snackbarHostState.showSnackbar(
+                message = message,
+                duration = SnackbarDuration.Short
+            )
         }
     }
 
@@ -132,9 +92,6 @@ fun LoginScreen(
                     colors = listOf(MentorBlue, MentorBlueDark)
                 )
             )
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = { focusManager.clearFocus() })
-            }
     ) {
         Column(
             modifier = Modifier
@@ -153,9 +110,7 @@ fun LoginScreen(
             )
 
             Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(),
+                modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
                 color = MaterialTheme.colorScheme.surface,
                 shadowElevation = 16.dp
@@ -208,6 +163,11 @@ fun LoginScreen(
                         onValueChange = { customerId = it },
                         placeholder = { Text(stringResource(R.string.hint_customer_id)) },
                         leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = MentorBlue) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
+                        ),
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -222,7 +182,19 @@ fun LoginScreen(
                         placeholder = { Text(stringResource(R.string.hint_password)) },
                         leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = MentorBlue) },
                         visualTransformation = PasswordVisualTransformation(),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                focusManager.clearFocus()
+                                if (customerId.isNotBlank() && password.isNotBlank()) {
+                                    viewModel.login(customerId.trim(), password.trim())
+                                }
+                            }
+                        ),
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -231,7 +203,7 @@ fun LoginScreen(
                         )
                     )
                     
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
                     
                     if (uiState is LoginUIState.LoginLoading || uiState is LoginUIState.CaptchaLoading) {
                         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -250,9 +222,12 @@ fun LoginScreen(
                         Button(
                             onClick = { 
                                 if (customerId.isNotBlank() && password.isNotBlank()) {
-                                    viewModel.startLoginFlow() 
+                                    focusManager.clearFocus()
+                                    viewModel.login(customerId.trim(), password.trim())
                                 } else {
-                                    Toast.makeText(context, "Please enter your Customer ID and Password", Toast.LENGTH_SHORT).show()
+                                    coroutineScope.launch {
+                                        snackbarHostState.showSnackbar("Please enter your Customer ID and Password")
+                                    }
                                 }
                             },
                             modifier = Modifier
@@ -270,7 +245,7 @@ fun LoginScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(32.dp))
+                    Spacer(modifier = Modifier.height(18.dp))
                     
                     // Visible reCAPTCHA Branding (Required for invisible reCAPTCHA)
                     Column(
@@ -300,7 +275,7 @@ fun LoginScreen(
                         )
                     }
 
-                    Spacer(modifier = Modifier.weight(1f))
+                    Spacer(modifier = Modifier.height(12.dp))
                     
                     TextButton(
                         onClick = { navController.navigate("request_registration") },
@@ -311,5 +286,13 @@ fun LoginScreen(
                 }
             }
         }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .navigationBarsPadding()
+                .padding(16.dp)
+        )
     }
 }

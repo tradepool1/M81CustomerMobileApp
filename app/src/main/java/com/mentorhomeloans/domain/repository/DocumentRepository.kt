@@ -10,26 +10,12 @@ import kotlinx.coroutines.flow.Flow
 interface DocumentRepository {
 
     /**
-     * Fetches the list of all available documents for a loan account.
-     *
-     * @param loanAccountId The loan account identifier.
-     * @return A [Flow] of [Result]<List<[Document]>>.
+     * Fetches master loan documents list from GetMasterRecords API.
      */
-    fun getDocuments(loanAccountId: String): Flow<Result<List<Document>>>
+    fun getMasterDocuments(): Flow<Result<List<Document>>>
 
     /**
-     * Downloads a document to the device's downloads directory.
-     *
-     * @param document The [Document] to download.
-     * @return [Result.Success] with the local file path on success.
+     * Sends request for a document via RequestDocument API.
      */
-    suspend fun downloadDocument(document: Document): Result<String>
-
-    /**
-     * Triggers document download on server and returns server message.
-     *
-     * @param loanAcNo The loan account number.
-     * @return [Result.Success] with the server message.
-     */
-    suspend fun getLoanDocuments(loanAcNo: String): Result<String>
+    suspend fun requestDocument(customerId: String, loanAcNo: String, documentTypeId: Int): Result<String>
 }

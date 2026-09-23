@@ -1,6 +1,5 @@
 package com.mentorhomeloans.feature.support
 
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -18,6 +17,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.*
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
+import kotlinx.coroutines.launch
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,11 +56,13 @@ fun SupportScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
     var showRaiseDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
         viewModel.ticketRaisedEvent.collect { message ->
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            snackbarHostState.showSnackbar(message)
         }
     }
 
@@ -72,6 +74,7 @@ fun SupportScreen(
                 onNavigationClick = { navController.popBackStack() }
             )
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             if (uiState is SupportUIState.Success) {
                 val state = uiState as SupportUIState.Success
@@ -80,7 +83,9 @@ fun SupportScreen(
                         if (state.isAdminRaiseAllowed) {
                             showRaiseDialog = true
                         } else {
-                            Toast.makeText(context, "Ticket creation is currently disabled by Admin.", Toast.LENGTH_SHORT).show()
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar("Ticket creation is currently disabled by Admin.")
+                            }
                         }
                     },
                     containerColor = if (state.isAdminRaiseAllowed) MentorBlue else Color.Gray,
@@ -112,7 +117,9 @@ fun SupportScreen(
                             onToggleAdmin = { viewModel.toggleAdminRaiseConfig() },
                             onRaiseClick = {
                                 if (state.isAdminRaiseAllowed) showRaiseDialog = true
-                                else Toast.makeText(context, "Ticket creation disabled by Admin.", Toast.LENGTH_SHORT).show()
+                                else coroutineScope.launch {
+                                    snackbarHostState.showSnackbar("Ticket creation disabled by Admin.")
+                                }
                             }
                         )
 

@@ -7,6 +7,9 @@ import com.mentorhomeloans.domain.model.Document
  */
 sealed interface DocumentsUIState {
     object Loading : DocumentsUIState
-    data class Success(val documents: List<Document>) : DocumentsUIState
+    data class Success(
+        val documents: List<Document>,
+        val loanAcNo: String = ""
+    ) : DocumentsUIState
     data class Error(val message: String) : DocumentsUIState
 }
