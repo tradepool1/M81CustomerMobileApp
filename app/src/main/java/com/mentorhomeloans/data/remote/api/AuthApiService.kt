@@ -6,6 +6,8 @@ import com.mentorhomeloans.data.remote.dto.PageContentDto
 import com.mentorhomeloans.data.remote.dto.RefreshTokenRequestDto
 import com.mentorhomeloans.data.remote.dto.UpdatePasswordRequestDto
 import com.mentorhomeloans.data.remote.dto.CommonResponseDto
+import com.mentorhomeloans.data.remote.dto.SaveFcmTokenRequestDto
+import com.mentorhomeloans.data.remote.dto.SaveFcmTokenResponseDto
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -57,4 +59,14 @@ interface AuthApiService {
     fun refreshAccessToken(
         @Body request: RefreshTokenRequestDto
     ): Call<OtpVerificationResponseDto>
+
+    /**
+     * Saves FCM token for push notifications on server.
+     * POST /api/MobileApp/SaveFcmToken
+     */
+    @Headers("Content-Type: application/json-patch+json")
+    @POST("SaveFcmToken")
+    suspend fun saveFcmToken(
+        @Body request: SaveFcmTokenRequestDto
+    ): List<SaveFcmTokenResponseDto>
 }

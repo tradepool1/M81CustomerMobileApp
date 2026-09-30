@@ -4,6 +4,7 @@ import com.mentorhomeloans.core.common.Result
 import com.mentorhomeloans.core.datastore.UserPreferencesDataStore
 import com.mentorhomeloans.core.security.SessionManager
 import com.mentorhomeloans.data.remote.dto.PageContentDto
+import com.mentorhomeloans.data.remote.dto.SaveFcmTokenResponseDto
 import com.mentorhomeloans.domain.repository.AuthRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -68,5 +69,17 @@ class MockAuthRepository @Inject constructor(
     ): Result<String> {
         delay(1000)
         return Result.Success("Password updated successfully (Mock)")
+    }
+
+    override suspend fun saveFcmToken(fcmToken: String): Result<List<SaveFcmTokenResponseDto>> {
+        delay(500)
+        return Result.Success(
+            listOf(
+                SaveFcmTokenResponseDto(
+                    responseCode = 1,
+                    responseMessage = "FCM token saved successfully."
+                )
+            )
+        )
     }
 }

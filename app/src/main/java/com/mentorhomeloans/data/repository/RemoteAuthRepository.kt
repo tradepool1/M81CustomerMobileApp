@@ -7,6 +7,8 @@ import com.mentorhomeloans.data.remote.api.AuthApiService
 import com.mentorhomeloans.data.remote.dto.LoginRequestDto
 import com.mentorhomeloans.data.remote.dto.PageContentDto
 import com.mentorhomeloans.data.remote.dto.UpdatePasswordRequestDto
+import com.mentorhomeloans.data.remote.dto.SaveFcmTokenRequestDto
+import com.mentorhomeloans.data.remote.dto.SaveFcmTokenResponseDto
 import com.mentorhomeloans.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -124,6 +126,18 @@ class RemoteAuthRepository @Inject constructor(
             } else {
                 Result.Error(Exception(response.message ?: "Failed to update password"))
             }
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    /**
+     * Calls SaveFcmToken endpoint.
+     */
+    override suspend fun saveFcmToken(fcmToken: String): Result<List<SaveFcmTokenResponseDto>> {
+        return try {
+            val response = authApiService.saveFcmToken(SaveFcmTokenRequestDto(fcmToken))
+            Result.Success(response)
         } catch (e: Exception) {
             Result.Error(e)
         }

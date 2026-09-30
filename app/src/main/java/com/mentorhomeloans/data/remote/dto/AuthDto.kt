@@ -48,3 +48,18 @@ data class UpdatePasswordRequestDto(
     @SerializedName("NewPassword") val newPassword: String,
     @SerializedName("CaptchaToken") val captchaToken: String = ""
 )
+
+/**
+ * Request body for SaveFcmToken endpoint.
+ */
+data class SaveFcmTokenRequestDto(
+    @SerializedName("fcmToken") val fcmToken: String
+)
+
+/**
+ * Response item for SaveFcmToken endpoint.
+ */
+data class SaveFcmTokenResponseDto(
+    @SerializedName("ResponseCode") val responseCode: Int,
+    @SerializedName("ResponseMessage") val responseMessage: String?
+)

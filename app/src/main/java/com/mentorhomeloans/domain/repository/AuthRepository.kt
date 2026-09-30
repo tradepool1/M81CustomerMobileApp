@@ -2,6 +2,7 @@ package com.mentorhomeloans.domain.repository
 
 import com.mentorhomeloans.core.common.Result
 import com.mentorhomeloans.data.remote.dto.PageContentDto
+import com.mentorhomeloans.data.remote.dto.SaveFcmTokenResponseDto
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -61,4 +62,12 @@ interface AuthRepository {
         newPassword: String,
         captchaToken: String
     ): Result<String>
+
+    /**
+     * Saves the FCM registration token on the server.
+     *
+     * @param fcmToken The FCM token string to register.
+     * @return [Result.Success] containing response list, or [Result.Error].
+     */
+    suspend fun saveFcmToken(fcmToken: String): Result<List<SaveFcmTokenResponseDto>>
 }

@@ -3,19 +3,20 @@ package com.mentorhomeloans.feature.dashboard
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mentorhomeloans.core.common.Result
+import com.mentorhomeloans.core.datastore.UserPreferencesDataStore
 import com.mentorhomeloans.core.security.SessionManager
 import com.mentorhomeloans.domain.model.LoanAccount
+import com.mentorhomeloans.domain.usecase.auth.SaveFcmTokenUseCase
 import com.mentorhomeloans.domain.usecase.loan.GetLoanAccountsUseCase
 import com.mentorhomeloans.domain.usecase.loan.GetLoanSummaryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
-import javax.inject.Inject
-
-import com.mentorhomeloans.core.datastore.UserPreferencesDataStore
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import timber.log.Timber
+import javax.inject.Inject
 
 /**
  * DashboardViewModel managing loan accounts summaries caching states.
@@ -24,6 +25,7 @@ import kotlinx.coroutines.flow.first
 class DashboardViewModel @Inject constructor(
     private val getLoanAccountsUseCase: GetLoanAccountsUseCase,
     private val getLoanSummaryUseCase: GetLoanSummaryUseCase,
+    private val saveFcmTokenUseCase: SaveFcmTokenUseCase,
     private val sessionManager: SessionManager,
     private val preferencesDataStore: UserPreferencesDataStore
 ) : ViewModel() {
@@ -34,8 +36,30 @@ class DashboardViewModel @Inject constructor(
     private var allLoansList: List<LoanAccount> = emptyList()
     private var currentSelectedIndex = 0
 
+    companion object {
+        private var hasSavedFcmTokenThisLaunch = false
+    }
+
     init {
         loadLoanData()
+        saveFcmTokenOnAppLaunch()
+    }
+
+    private fun saveFcmTokenOnAppLaunch() {
+        if (!hasSavedFcmTokenThisLaunch) {
+            hasSavedFcmTokenThisLaunch = true
+            viewModelScope.launch {
+                when (val result = saveFcmTokenUseCase("abcd")) {
+                    is Result.Success -> {
+                        Timber.d("FCM Token saved successfully: ${result.data}")
+                    }
+                    is Result.Error -> {
+                        Timber.e(result.exception, "Failed to save FCM Token")
+                    }
+                    else -> {}
+                }
+            }
+        }
     }
 
     fun loadLoanData() {
